@@ -1,9 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap');
 
+:root {
+    --primary-accent-color: #00CFE8; /* Electric Blue/Cyan */
+    --primary-accent-glow: rgba(0, 207, 232, 0.5);
+    --primary-accent-darker: #00a7b3; /* For hover/active states */
+    --primary-accent-darkest: #007B8A; /* For base button states before hover */
+
+    --positive-color: #2ecc71; /* Green */
+    --positive-color-darker: #27ae60;
+    --positive-glow: rgba(46, 204, 113, 0.5);
+
+    --negative-color: #e74c3c; /* Red */
+
+    --thematic-gold-color: #f0a500;
+
+    --base-bg-color: #1a1a2e;
+    --container-bg-color: #162447;
+    --section-bg-color: #1b1b2f; /* Also for active tab */
+    --card-bg-color: #2c3e50;   /* Also for inactive tab */
+
+    --text-light-primary: #e0e0e0;
+    --text-light-secondary: #bdc3c7;
+    --text-light-tertiary: #95a5a6;
+    --text-bright-neutral: #ecf0f1;
+    --text-dark-contrast: #162447; /* For text on bright primary accent backgrounds */
+
+
+    --border-dark-accent: #1f4068;
+    --disabled-bg-color: #7f8c8d;
+    --disabled-text-color: #bdc3c7;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #1a1a2e; /* Base background */
-    color: #e0e0e0; /* Default light text */
+    background-color: var(--base-bg-color);
+    color: var(--text-light-primary);
     margin: 0;
     padding: 20px;
     display: flex;
@@ -14,7 +45,7 @@ body {
 }
 
 .container {
-    background-color: #162447; /* Main container background */
+    background-color: var(--container-bg-color);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -28,7 +59,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background-color: #162447; /* Match container background */
+    background-color: var(--container-bg-color); /* Match container background */
     padding-bottom: 15px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
@@ -37,15 +68,15 @@ header { /* Game Title Header */
     text-align: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #1f4068; /* Dark blue accent border */
+    border-bottom: 2px solid var(--border-dark-accent);
 }
 
 header h1 { /* Realm Tycoon: Ascendancy */
     font-family: 'Orbitron', sans-serif;
-    color: #00CFE8; /* NEW Primary Accent - Electric Blue/Cyan */
+    color: var(--primary-accent-color);
     font-size: 2.8em;
     margin: 0;
-    text-shadow: 0 0 10px rgba(0, 207, 232, 0.5); /* Glow matching new primary accent */
+    text-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
 /* Stats Section Styling (within sticky area) */
@@ -57,12 +88,12 @@ header h1 { /* Realm Tycoon: Ascendancy */
      box-shadow: none;
 }
 #stats-section h2 { /* "Your Empire" title */
-    font-family: 'Orbitron', sans-serif; /* Keep Orbitron for consistency */
-    color: #ecf0f1; /* NEW - Bright Neutral White/Light Grey */
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-bright-neutral);
     margin-top: 0;
     padding-bottom: 10px;
     font-size: 1.8em;
-    border-bottom: 1px solid #1f4068; /* Dark blue accent border */
+    border-bottom: 1px solid var(--border-dark-accent);
 }
 
 .stats-display { /* The Gold and IPS boxes */
@@ -79,7 +110,7 @@ header h1 { /* Realm Tycoon: Ascendancy */
     margin: 5px 10px;
     padding: 10px 20px;
     border-radius: 4px;
-    background-color: #1f4068; /* Dark blue accent background for stat boxes */
+    background-color: var(--border-dark-accent);
     min-width: 200px;
     text-align: center;
 }
@@ -90,8 +121,8 @@ header h1 { /* Realm Tycoon: Ascendancy */
     margin-left: 8px;
     font-size: 1.3em;
 }
-#goldDisplay { color: #f0a500; } /* Keep Thematic Gold */
-#ipsDisplay { color: #2ecc71; } /* Keep Positive Green for IPS */
+#goldDisplay { color: var(--thematic-gold-color); }
+#ipsDisplay { color: var(--positive-color); }
 
 
 /* Tab Navigation */
@@ -106,8 +137,8 @@ header h1 { /* Realm Tycoon: Ascendancy */
     cursor: pointer;
     border: none;
     border-bottom: 3px solid transparent;
-    background-color: #2c3e50; /* Dark Slate Blue for inactive tabs */
-    color: #bdc3c7; /* Light grey for inactive text */
+    background-color: var(--card-bg-color); /* Inactive tab */
+    color: var(--text-light-secondary);
     font-size: 1.1em;
     font-weight: 500;
     margin-right: 8px;
@@ -116,14 +147,14 @@ header h1 { /* Realm Tycoon: Ascendancy */
 }
 
 .tab-button:hover {
-    background-color: #34495e; /* Slightly lighter on hover */
+    background-color: var(--border-dark-accent); /* Slightly lighter for hover */
     color: #ffffff;
 }
 
 .tab-button.active {
-    background-color: #1b1b2f; /* Match active panel section background */
-    color: #00CFE8; /* NEW Primary Accent for active tab text */
-    border-bottom-color: #00CFE8; /* NEW Primary Accent for active tab underline */
+    background-color: var(--section-bg-color); /* Active tab matches section */
+    color: var(--primary-accent-color);
+    border-bottom-color: var(--primary-accent-color);
 }
 
 /* Tab Panels & Content Sections */
@@ -132,20 +163,23 @@ header h1 { /* Realm Tycoon: Ascendancy */
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
+/* Styling for the sections INSIDE the tabs */
 #properties-section-content,
-#owned-properties-section-content {
+#owned-properties-section-content,
+#achievements-section-content { /* Added achievements section */
     margin-bottom: 0;
     padding: 20px;
-    background-color: #1b1b2f; /* Background for content within tabs */
+    background-color: var(--section-bg-color);
     border-radius: 8px;
 }
 
 #properties-section-content h2,
-#owned-properties-section-content h2 { /* Titles like "Purchase New Properties" */
-    font-family: 'Orbitron', sans-serif; /* Keep Orbitron */
-    color: #ecf0f1; /* NEW - Bright Neutral White/Light Grey */
+#owned-properties-section-content h2,
+#achievements-section-content h2 { /* Added achievements section */
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-bright-neutral);
     margin-top: 0;
-    border-bottom: 1px solid #1f4068; /* Dark blue accent border */
+    border-bottom: 1px solid var(--border-dark-accent);
     padding-bottom: 10px;
     font-size: 1.8em;
 }
@@ -159,8 +193,8 @@ header h1 { /* Realm Tycoon: Ascendancy */
 }
 
 .property-card {
-    background-color: #2c3e50; /* Dark slate blue for cards */
-    border: 1px solid #1f4068; /* Dark blue accent border */
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-dark-accent);
     border-radius: 8px;
     padding: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -178,7 +212,7 @@ header h1 { /* Realm Tycoon: Ascendancy */
 .property-card h3 { /* Property Names */
     margin-top: 0;
     margin-bottom: 10px;
-    color: #00CFE8; /* NEW Primary Accent */
+    color: var(--primary-accent-color);
     font-size: 1.4em;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
@@ -187,20 +221,20 @@ header h1 { /* Realm Tycoon: Ascendancy */
 .property-card p {
     margin: 8px 0;
     font-size: 0.95em;
-    color: #bdc3c7; /* Lighter grey for details */
+    color: var(--text-light-secondary);
 }
 
 .property-card .description {
     font-style: italic;
     font-size: 0.9em;
-    color: #95a5a6; /* Softer grey for description */
+    color: var(--text-light-tertiary);
     margin-bottom: 12px;
     min-height: 40px;
 }
 
 .property-cost { font-weight: bold; }
-.property-cost.unaffordable { color: #e74c3c; } /* Keep Red for unaffordable */
-.property-cost.affordable { color: #2ecc71; } /* Keep Green for affordable */
+.property-cost.unaffordable { color: var(--negative-color); }
+.property-cost.affordable { color: var(--positive-color); }
 
 
 /* Tier Indicators - More Uniform */
@@ -209,19 +243,16 @@ header h1 { /* Realm Tycoon: Ascendancy */
     font-weight: bold;
     padding: 3px 8px;
     border-radius: 4px;
-    color: #ecf0f1; /* Bright white/light grey text for tier number */
-    background-color: #1f4068; /* NEW - Consistent Dark Blue Accent background */
+    color: var(--text-bright-neutral);
+    background-color: var(--border-dark-accent);
     margin-bottom: 8px;
     display: inline-block;
 }
-/* Remove individual tier background colors for uniformity */
-/* .tier-1, .tier-2, .tier-3, .tier-4, .tier-5 { background-color: #1f4068; } */ /* This is handled by the general .tier-indicator now */
-
 
 /* Level Progress Bar */
 .level-progress-container {
     width: 100%;
-    background-color: #1f4068; /* Dark blue accent background for bar container */
+    background-color: var(--border-dark-accent);
     border-radius: 4px;
     height: 12px;
     margin: 8px 0;
@@ -230,21 +261,20 @@ header h1 { /* Realm Tycoon: Ascendancy */
 
 .level-progress-bar {
     height: 100%;
-    background-color: #00CFE8; /* NEW Primary Accent for progress fill */
+    background-color: var(--primary-accent-color);
     border-radius: 4px 0 0 4px;
     transition: width 0.3s ease-out;
     text-align: center;
     font-size: 0.7em;
     line-height: 12px;
-    color: #162447; /* Dark text on bright bar for contrast */
+    color: var(--text-dark-contrast);
 }
 
 .owned-property-details p { margin: 6px 0; }
-.owned-property-details .income-gain { color: #2ecc71; font-weight: 500; } /* Keep Green for IPS gain */
+.owned-property-details .income-gain { color: var(--positive-color); font-weight: 500; }
 
 /* Buttons */
-.property-card button { /* Default button style - will be purchase button */
-    background-color: #007B8A; /* Darker shade of Primary Accent for base purchase button */
+.property-card button { /* Base style for buttons in cards */
     color: white;
     border: none;
     padding: 12px 18px;
@@ -256,48 +286,221 @@ header h1 { /* Realm Tycoon: Ascendancy */
     font-weight: 500;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    margin-top: 15px;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    margin-top: 10px; /* Default margin-top for single button */
     box-sizing: border-box;
 }
 
-.property-card button:hover:not(:disabled) {
-    background-color: #00CFE8; /* NEW Primary Accent on hover for purchase */
+/* Default Purchase Button Style */
+.property-card button.purchase-button {
+    background-color: var(--primary-accent-darkest);
+}
+.property-card button.purchase-button:hover:not(:disabled) {
+    background-color: var(--primary-accent-darker);
     transform: translateY(-1px);
 }
-
-.property-card button.purchase-button.btn-affordable,
-.property-card button.purchase-button:hover:not(:disabled) { /* Ensure hover is primary accent */
-    background-color: #00CFE8; /* NEW Primary Accent for affordable purchase */
+.property-card button.purchase-button.btn-affordable {
+    background-color: var(--primary-accent-color);
+    box-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
 
-.property-card button:active:not(:disabled) { transform: translateY(0px); }
-
+/* Upgrade Button Style */
 .property-card button.upgrade-button {
-    background-color: #27ae60; /* Darker Green for base upgrade button */
+    background-color: var(--positive-color-darker);
 }
 .property-card button.upgrade-button:hover:not(:disabled) {
-    background-color: #2ecc71; /* Keep Green for upgrade button hover */
+    background-color: var(--positive-color);
+    transform: translateY(-1px);
 }
 .property-card button.upgrade-button.btn-affordable {
-     background-color: #2ecc71; /* Keep Green for affordable upgrade */
+     background-color: var(--positive-color);
+     box-shadow: 0 0 10px var(--positive-glow);
 }
 
-
+/* General button states */
+.property-card button:active:not(:disabled) { transform: translateY(0px); }
 .property-card button:disabled {
-    background-color: #7f8c8d; /* Concrete grey for disabled */
-    color: #bdc3c7;
+    background-color: var(--disabled-bg-color);
+    color: var(--disabled-text-color);
     cursor: not-allowed;
     opacity: 0.7;
+    box-shadow: none;
 }
 
-/* Button Glows */
-.property-card button.btn-affordable.purchase-button {
-    box-shadow: 0 0 10px rgba(0, 207, 232, 0.6); /* Glow matching NEW Primary Accent */
+/* Buy Multiple Options */
+.buy-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2x2 layout */
+    gap: 8px;
+    margin-top: 15px; /* Space above the group of buttons */
 }
-.property-card button.btn-affordable.upgrade-button {
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); /* Keep Green glow for upgrade */
+
+.buy-multiple-button { /* Specific styling for these smaller buttons */
+    padding: 8px 5px !important;
+    font-size: 0.9em !important;
+    margin-top: 0 !important; /* Remove individual margin-top if grouped */
+    background-color: var(--primary-accent-darkest); /* Base for buy multiple */
+}
+.buy-multiple-button:hover:not(:disabled) {
+    background-color: var(--primary-accent-darker) !important;
+}
+.buy-multiple-button.btn-affordable {
+    background-color: var(--primary-accent-color) !important;
+    box-shadow: 0 0 8px var(--primary-accent-glow) !important;
+}
+
+
+/* Notification Area */
+#notificationArea {
+    position: fixed;
+    top: 20px; /* Adjust if sticky header is very tall */
+    right: 20px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 300px; /* Max width for notifications */
+}
+
+.achievement-notification {
+    background-color: var(--primary-accent-color);
+    color: var(--text-dark-contrast);
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--primary-accent-glow);
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.1em;
+    opacity: 1;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transform: translateX(0);
+    width: 100%;
+    box-sizing: border-box;
+}
+.achievement-notification.fade-out {
+    opacity: 0;
+    transform: translateX(110%); /* Move completely off-screen */
+}
+
+
+/* Achievements Tab */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.achievement-card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-dark-accent);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    opacity: 0.6; /* Dim locked achievements */
+    transition: opacity 0.3s, border-left-color 0.3s;
+    border-left: 5px solid transparent; /* Placeholder for unlocked state */
+}
+
+.achievement-card.unlocked {
+    opacity: 1;
+    border-left-color: var(--primary-accent-color);
+}
+
+.achievement-icon {
+    font-size: 2.5em;
+    margin-right: 15px;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.achievement-info {
+    flex-grow: 1;
+}
+
+.achievement-info h4 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-light-secondary); /* Muted for locked */
+    margin: 0 0 5px 0;
+}
+.achievement-card.unlocked .achievement-info h4 {
+    color: var(--primary-accent-color); /* Accent for unlocked */
+}
+
+
+.achievement-info p {
+    font-size: 0.9em;
+    color: var(--text-light-tertiary);
+    margin: 0;
+}
+
+.achievement-status {
+    margin-left: auto; /* Pushes to the right */
+    font-weight: bold;
+    font-size: 0.9em;
+    padding-left: 10px; /* Space from info */
+    flex-shrink: 0;
+}
+.achievement-card.unlocked .achievement-status {
+    color: var(--positive-color);
+}
+.achievement-card:not(.unlocked) .achievement-status {
+    color: var(--text-light-tertiary);
+}
+
+/* Offline Progress Popup */
+.offline-progress-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--section-bg-color);
+    color: var(--text-light-primary);
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    text-align: center;
+    border: 1px solid var(--primary-accent-color);
+    width: 90%;
+    max-width: 450px;
+    box-sizing: border-box;
+}
+
+.offline-progress-popup h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-accent-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+.offline-progress-popup p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.offline-progress-popup .highlight {
+    color: var(--thematic-gold-color);
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.offline-progress-popup button {
+    background-color: var(--primary-accent-color);
+    color: var(--text-dark-contrast);
+    font-family: 'Orbitron', sans-serif;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.offline-progress-popup button:hover {
+    background-color: var(--primary-accent-darker);
 }
 
 
@@ -305,7 +508,7 @@ footer {
     text-align: center;
     margin-top: 40px;
     padding-top: 20px;
-    border-top: 1px solid #1f4068; /* Dark blue accent border */
+    border-top: 1px solid var(--border-dark-accent);
     font-size: 0.9em;
-    color: #7f8c8d; /* Muted grey for footer text */
+    color: var(--text-light-tertiary);
 }

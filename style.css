@@ -1,9 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap');
 
+:root {
+    --primary-accent-color: #00CFE8; /* Electric Blue/Cyan */
+    --primary-accent-glow: rgba(0, 207, 232, 0.5);
+    --primary-accent-darker: #00a7b3; /* For hover/active states */
+    --primary-accent-darkest: #007B8A; /* For base button states before hover */
+
+    --positive-color: #2ecc71; /* Green */
+    --positive-color-darker: #27ae60;
+    --positive-glow: rgba(46, 204, 113, 0.5);
+
+    --negative-color: #e74c3c; /* Red */
+
+    --thematic-gold-color: #f0a500;
+
+    --base-bg-color: #1a1a2e;
+    --container-bg-color: #162447;
+    --section-bg-color: #1b1b2f; /* Also for active tab */
+    --card-bg-color: #2c3e50;   /* Also for inactive tab */
+
+    --text-light-primary: #e0e0e0;
+    --text-light-secondary: #bdc3c7;
+    --text-light-tertiary: #95a5a6;
+    --text-bright-neutral: #ecf0f1;
+    --text-dark-contrast: #162447; /* For text on bright primary accent backgrounds */
+
+
+    --border-dark-accent: #1f4068;
+    --disabled-bg-color: #7f8c8d;
+    --disabled-text-color: #bdc3c7;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #1a1a2e; /* Dark blue-purple background */
-    color: #e0e0e0; /* Light grey text */
+    background-color: var(--base-bg-color);
+    color: var(--text-light-primary);
     margin: 0;
     padding: 20px;
     display: flex;
@@ -14,59 +45,64 @@ body {
 }
 
 .container {
-    background-color: #162447; /* Darker blue container */
+    background-color: var(--container-bg-color);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 1000px; /* Slightly wider for better layout */
+    max-width: 1000px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
+/* Sticky Header Area Styling */
+.sticky-top-area {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: var(--container-bg-color); /* Match container background */
     padding-bottom: 15px;
-    border-bottom: 2px solid #1f4068; /* Darker accent blue */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-header h1 {
-    font-family: 'Orbitron', sans-serif; /* Sci-fi/gamey font */
-    color: #e43f5a; /* Striking red-pink accent */
+header { /* Game Title Header */
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-dark-accent);
+}
+
+header h1 { /* Realm Tycoon: Ascendancy */
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-accent-color);
     font-size: 2.8em;
     margin: 0;
-    text-shadow: 0 0 10px rgba(228, 63, 90, 0.5);
+    text-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
-section {
-    margin-bottom: 35px;
-    padding: 20px;
-    background-color: #1b1b2f; /* Slightly lighter than body for sections */
-    border-radius: 8px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+/* Stats Section Styling (within sticky area) */
+#stats-section {
+     margin-bottom: 0;
+     padding: 15px 20px 0 20px;
+     background-color: transparent;
+     border-radius: 0;
+     box-shadow: none;
 }
-
-section h2 {
+#stats-section h2 { /* "Your Empire" title */
     font-family: 'Orbitron', sans-serif;
-    color: #f0a500; /* Gold/Yellow accent for section titles */
+    color: var(--text-bright-neutral);
     margin-top: 0;
-    border-bottom: 1px solid #1f4068;
     padding-bottom: 10px;
     font-size: 1.8em;
+    border-bottom: 1px solid var(--border-dark-accent);
 }
 
-/* Stats Display */
-#stats-section h2 {
-    color: #1abc9c; /* Teal for "Your Empire" */
-}
-
-.stats-display {
+.stats-display { /* The Gold and IPS boxes */
     display: flex;
     justify-content: space-around;
     align-items: center;
-    font-size: 1.2em; /* Increased font size */
-    font-weight: 500; /* Medium weight */
-    padding: 15px 0;
-    background-color: rgba(0,0,0,0.1);
+    font-size: 1.2em;
+    font-weight: 500;
+    padding: 10px 0;
     border-radius: 6px;
 }
 
@@ -74,38 +110,98 @@ section h2 {
     margin: 5px 10px;
     padding: 10px 20px;
     border-radius: 4px;
-    background-color: #1f4068; /* Dark accent blue for stat boxes */
-    min-width: 200px; /* Ensure consistent width */
+    background-color: var(--border-dark-accent);
+    min-width: 200px;
     text-align: center;
 }
 
 .stats-display span {
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     color: #ffffff; /* White for numbers */
     margin-left: 8px;
-    font-size: 1.3em; /* Larger numbers */
+    font-size: 1.3em;
 }
-#goldDisplay { color: #f0a500; } /* Gold color for gold stat */
-#ipsDisplay { color: #2ecc71; } /* Green for IPS stat */
+#goldDisplay { color: var(--thematic-gold-color); }
+#ipsDisplay { color: var(--positive-color); }
 
 
-/* Properties Grid */
+/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.tab-button {
+    font-family: 'Orbitron', sans-serif;
+    padding: 12px 25px;
+    cursor: pointer;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background-color: var(--card-bg-color); /* Inactive tab */
+    color: var(--text-light-secondary);
+    font-size: 1.1em;
+    font-weight: 500;
+    margin-right: 8px;
+    border-radius: 6px 6px 0 0;
+    transition: background-color 0.3s, color 0.3s, border-bottom-color 0.3s;
+}
+
+.tab-button:hover {
+    background-color: var(--border-dark-accent); /* Slightly lighter for hover */
+    color: #ffffff;
+}
+
+.tab-button.active {
+    background-color: var(--section-bg-color); /* Active tab matches section */
+    color: var(--primary-accent-color);
+    border-bottom-color: var(--primary-accent-color);
+}
+
+/* Tab Panels & Content Sections */
+#tabContentContainer { }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Styling for the sections INSIDE the tabs */
+#properties-section-content,
+#owned-properties-section-content,
+#achievements-section-content { /* Added achievements section */
+    margin-bottom: 0;
+    padding: 20px;
+    background-color: var(--section-bg-color);
+    border-radius: 8px;
+}
+
+#properties-section-content h2,
+#owned-properties-section-content h2,
+#achievements-section-content h2 { /* Added achievements section */
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-bright-neutral);
+    margin-top: 0;
+    border-bottom: 1px solid var(--border-dark-accent);
+    padding-bottom: 10px;
+    font-size: 1.8em;
+}
+
+
+/* Properties Grid (applies within active tab) */
 .properties-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Slightly larger cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
 .property-card {
-    background-color: #2c3e50; /* Dark slate blue for cards */
-    border: 1px solid #1f4068;
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-dark-accent);
     border-radius: 8px;
     padding: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes button to bottom if card height varies */
+    justify-content: space-between;
 }
 
 .property-card:hover {
@@ -113,10 +209,10 @@ section h2 {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
-.property-card h3 {
+.property-card h3 { /* Property Names */
     margin-top: 0;
     margin-bottom: 10px;
-    color: #e43f5a; /* Red-pink accent for property names */
+    color: var(--primary-accent-color);
     font-size: 1.4em;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
@@ -125,123 +221,286 @@ section h2 {
 .property-card p {
     margin: 8px 0;
     font-size: 0.95em;
-    color: #bdc3c7; /* Lighter grey for details */
+    color: var(--text-light-secondary);
 }
 
 .property-card .description {
     font-style: italic;
     font-size: 0.9em;
-    color: #95a5a6; /* Softer grey for description */
+    color: var(--text-light-tertiary);
     margin-bottom: 12px;
-    min-height: 40px; /* Give some space for descriptions */
+    min-height: 40px;
 }
 
-.property-cost {
-    font-weight: bold;
-}
-.property-cost.unaffordable {
-    color: #e74c3c; /* Alizarin Crimson for unaffordable costs */
-}
-.property-cost.affordable {
-    color: #2ecc71; /* Emerald green for affordable costs */
-}
+.property-cost { font-weight: bold; }
+.property-cost.unaffordable { color: var(--negative-color); }
+.property-cost.affordable { color: var(--positive-color); }
 
 
-/* Tier Indicators */
+/* Tier Indicators - More Uniform */
 .tier-indicator {
     font-size: 0.8em;
     font-weight: bold;
     padding: 3px 8px;
     border-radius: 4px;
-    color: #fff;
+    color: var(--text-bright-neutral);
+    background-color: var(--border-dark-accent);
     margin-bottom: 8px;
     display: inline-block;
 }
-.tier-1 { background-color: #3498db; } /* Peter River Blue */
-.tier-2 { background-color: #2ecc71; } /* Emerald Green */
-.tier-3 { background-color: #f1c40f; color: #333; } /* Sun Flower Yellow */
-.tier-4 { background-color: #e67e22; } /* Carrot Orange */
-.tier-5 { background-color: #9b59b6; } /* Amethyst Purple */
-
 
 /* Level Progress Bar */
 .level-progress-container {
     width: 100%;
-    background-color: #1f4068; /* Darker blue background for bar */
+    background-color: var(--border-dark-accent);
     border-radius: 4px;
     height: 12px;
     margin: 8px 0;
-    overflow: hidden; /* Ensures inner bar stays rounded */
+    overflow: hidden;
 }
 
 .level-progress-bar {
     height: 100%;
-    background-color: #e43f5a; /* Red-pink accent for progress */
-    border-radius: 4px 0 0 4px; /* Round left corners if not full */
+    background-color: var(--primary-accent-color);
+    border-radius: 4px 0 0 4px;
     transition: width 0.3s ease-out;
     text-align: center;
     font-size: 0.7em;
-    line-height: 12px; /* Vertically center text */
-    color: #fff;
+    line-height: 12px;
+    color: var(--text-dark-contrast);
 }
 
-.owned-property-details p {
-    margin: 6px 0;
-}
-.owned-property-details .income-gain {
-    color: #2ecc71; /* Green for positive income gain */
-    font-weight: 500;
-}
+.owned-property-details p { margin: 6px 0; }
+.owned-property-details .income-gain { color: var(--positive-color); font-weight: 500; }
 
 /* Buttons */
-.property-card button {
-    background-color: #3498db; /* Peter River Blue */
+.property-card button { /* Base style for buttons in cards */
     color: white;
     border: none;
     padding: 12px 18px;
     text-align: center;
     text-decoration: none;
-    display: block; /* Make button take full width */
+    display: block;
     width: 100%;
     font-size: 1.1em;
     font-weight: 500;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    margin-top: 15px; /* Space above button */
-    box-sizing: border-box; /* Ensure padding doesn't expand beyond width */
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    margin-top: 10px; /* Default margin-top for single button */
+    box-sizing: border-box;
 }
 
-.property-card button:hover:not(:disabled) {
-    background-color: #2980b9; /* Darker blue on hover */
+/* Default Purchase Button Style */
+.property-card button.purchase-button {
+    background-color: var(--primary-accent-darkest);
+}
+.property-card button.purchase-button:hover:not(:disabled) {
+    background-color: var(--primary-accent-darker);
     transform: translateY(-1px);
 }
-
-.property-card button:active:not(:disabled) {
-    transform: translateY(0px);
+.property-card button.purchase-button.btn-affordable {
+    background-color: var(--primary-accent-color);
+    box-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
+
+/* Upgrade Button Style */
 .property-card button.upgrade-button {
-    background-color: #2ecc71; /* Emerald Green for upgrade */
+    background-color: var(--positive-color-darker);
 }
 .property-card button.upgrade-button:hover:not(:disabled) {
-    background-color: #27ae60; /* Darker green */
+    background-color: var(--positive-color);
+    transform: translateY(-1px);
+}
+.property-card button.upgrade-button.btn-affordable {
+     background-color: var(--positive-color);
+     box-shadow: 0 0 10px var(--positive-glow);
 }
 
+/* General button states */
+.property-card button:active:not(:disabled) { transform: translateY(0px); }
 .property-card button:disabled {
-    background-color: #7f8c8d; /* Concrete grey for disabled */
-    color: #bdc3c7;
+    background-color: var(--disabled-bg-color);
+    color: var(--disabled-text-color);
     cursor: not-allowed;
     opacity: 0.7;
+    box-shadow: none;
 }
 
-/* Make affordable buttons stand out more */
-.property-card button.btn-affordable {
-     /* Already handled by default button styles, but could add specific highlight */
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); /* Glow for affordable upgrade */
+/* Buy Multiple Options */
+.buy-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2x2 layout */
+    gap: 8px;
+    margin-top: 15px; /* Space above the group of buttons */
 }
-.property-card button.btn-affordable.purchase-button {
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); /* Glow for affordable purchase */
+
+.buy-multiple-button { /* Specific styling for these smaller buttons */
+    padding: 8px 5px !important;
+    font-size: 0.9em !important;
+    margin-top: 0 !important; /* Remove individual margin-top if grouped */
+    background-color: var(--primary-accent-darkest); /* Base for buy multiple */
+}
+.buy-multiple-button:hover:not(:disabled) {
+    background-color: var(--primary-accent-darker) !important;
+}
+.buy-multiple-button.btn-affordable {
+    background-color: var(--primary-accent-color) !important;
+    box-shadow: 0 0 8px var(--primary-accent-glow) !important;
+}
+
+
+/* Notification Area */
+#notificationArea {
+    position: fixed;
+    top: 20px; /* Adjust if sticky header is very tall */
+    right: 20px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 300px; /* Max width for notifications */
+}
+
+.achievement-notification {
+    background-color: var(--primary-accent-color);
+    color: var(--text-dark-contrast);
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--primary-accent-glow);
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.1em;
+    opacity: 1;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transform: translateX(0);
+    width: 100%;
+    box-sizing: border-box;
+}
+.achievement-notification.fade-out {
+    opacity: 0;
+    transform: translateX(110%); /* Move completely off-screen */
+}
+
+
+/* Achievements Tab */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.achievement-card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-dark-accent);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    opacity: 0.6; /* Dim locked achievements */
+    transition: opacity 0.3s, border-left-color 0.3s;
+    border-left: 5px solid transparent; /* Placeholder for unlocked state */
+}
+
+.achievement-card.unlocked {
+    opacity: 1;
+    border-left-color: var(--primary-accent-color);
+}
+
+.achievement-icon {
+    font-size: 2.5em;
+    margin-right: 15px;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.achievement-info {
+    flex-grow: 1;
+}
+
+.achievement-info h4 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-light-secondary); /* Muted for locked */
+    margin: 0 0 5px 0;
+}
+.achievement-card.unlocked .achievement-info h4 {
+    color: var(--primary-accent-color); /* Accent for unlocked */
+}
+
+
+.achievement-info p {
+    font-size: 0.9em;
+    color: var(--text-light-tertiary);
+    margin: 0;
+}
+
+.achievement-status {
+    margin-left: auto; /* Pushes to the right */
+    font-weight: bold;
+    font-size: 0.9em;
+    padding-left: 10px; /* Space from info */
+    flex-shrink: 0;
+}
+.achievement-card.unlocked .achievement-status {
+    color: var(--positive-color);
+}
+.achievement-card:not(.unlocked) .achievement-status {
+    color: var(--text-light-tertiary);
+}
+
+/* Offline Progress Popup */
+.offline-progress-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--section-bg-color);
+    color: var(--text-light-primary);
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    text-align: center;
+    border: 1px solid var(--primary-accent-color);
+    width: 90%;
+    max-width: 450px;
+    box-sizing: border-box;
+}
+
+.offline-progress-popup h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-accent-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+.offline-progress-popup p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.offline-progress-popup .highlight {
+    color: var(--thematic-gold-color);
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.offline-progress-popup button {
+    background-color: var(--primary-accent-color);
+    color: var(--text-dark-contrast);
+    font-family: 'Orbitron', sans-serif;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.offline-progress-popup button:hover {
+    background-color: var(--primary-accent-darker);
 }
 
 
@@ -249,7 +508,7 @@ footer {
     text-align: center;
     margin-top: 40px;
     padding-top: 20px;
-    border-top: 1px solid #1f4068;
+    border-top: 1px solid var(--border-dark-accent);
     font-size: 0.9em;
-    color: #7f8c8d;
+    color: var(--text-light-tertiary);
 }

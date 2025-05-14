@@ -4,40 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realm Tycoon: Ascendancy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Realm Tycoon: Ascendancy</h1>
-        </header>
+        <div class="sticky-top-area">
+            <header>
+                <h1>Realm Tycoon: Ascendancy</h1>
+            </header>
+            <section id="stats-section">
+                <h2>Your Empire</h2>
+                <div class="stats-display">
+                    <p>Gold: <span id="goldDisplay">0</span></p>
+                    <p>Income Per Second (IPS): <span id="ipsDisplay">0</span></p>
+                </div>
+            </section>
+        </div>
 
-        <section id="stats-section">
-            <h2>Your Empire</h2>
-            <div class="stats-display">
-                <p>Gold: <span id="goldDisplay">0</span></p>
-                <p>Income Per Second (IPS): <span id="ipsDisplay">0</span></p>
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="availablePropertiesTabContent">Available Properties</button>
+            <button class="tab-button" data-tab="ownedPropertiesTabContent">Your Holdings</button>
+            <button class="tab-button" data-tab="achievementsTabContent">Achievements</button>
             </div>
-        </section>
 
-        <section id="properties-section">
-            <h2>Available Properties</h2>
-            <div id="propertiesContainer" class="properties-grid">
-                </div>
-        </section>
+        <div id="tabContentContainer">
+            <div id="availablePropertiesTabContent" class="tab-panel active">
+                <section id="properties-section-content">
+                    <h2>Purchase New Properties</h2>
+                    <div id="propertiesContainer" class="properties-grid">
+                        </div>
+                </section>
+            </div>
 
-        <section id="owned-properties-section">
-            <h2>Your Holdings</h2>
-            <div id="ownedPropertiesContainer" class="properties-grid">
-                </div>
-        </section>
+            <div id="ownedPropertiesTabContent" class="tab-panel">
+                <section id="owned-properties-section-content">
+                    <h2>Manage & Upgrade Holdings</h2>
+                    <div id="ownedPropertiesContainer" class="properties-grid">
+                        </div>
+                </section>
+            </div>
+
+            <div id="achievementsTabContent" class="tab-panel">
+                <section id="achievements-section-content">
+                    <h2>Feats of Fortune</h2>
+                    <div id="achievementsContainer" class="achievements-grid">
+                        </div>
+                </section>
+            </div>
+        </div>
 
         <footer>
-            <p>Realm Tycoon - &copy; 2025</p>
+            <p>Realm Tycoon - &copy; <span id="currentYear">2025</span></p>
         </footer>
     </div>
 
+    <div id="notificationArea"></div>
+
     <script src="js/properties.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/achievements.js"></script> <script src="js/main.js"></script>
 </body>
 </html>

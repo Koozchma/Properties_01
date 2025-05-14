@@ -25,19 +25,30 @@
         <div class="tab-navigation">
             <button class="tab-button active" data-tab="availablePropertiesTabContent">Available Properties</button>
             <button class="tab-button" data-tab="ownedPropertiesTabContent">Your Holdings</button>
-        </div>
+            <button class="tab-button" data-tab="achievementsTabContent">Achievements</button>
+            </div>
 
         <div id="tabContentContainer">
             <div id="availablePropertiesTabContent" class="tab-panel active">
-                <section id="properties-section-content"> <h2>Purchase New Properties</h2>
+                <section id="properties-section-content">
+                    <h2>Purchase New Properties</h2>
                     <div id="propertiesContainer" class="properties-grid">
                         </div>
                 </section>
             </div>
 
             <div id="ownedPropertiesTabContent" class="tab-panel">
-                <section id="owned-properties-section-content"> <h2>Manage & Upgrade Holdings</h2>
+                <section id="owned-properties-section-content">
+                    <h2>Manage & Upgrade Holdings</h2>
                     <div id="ownedPropertiesContainer" class="properties-grid">
+                        </div>
+                </section>
+            </div>
+
+            <div id="achievementsTabContent" class="tab-panel">
+                <section id="achievements-section-content">
+                    <h2>Feats of Fortune</h2>
+                    <div id="achievementsContainer" class="achievements-grid">
                         </div>
                 </section>
             </div>
@@ -48,7 +59,9 @@
         </footer>
     </div>
 
+    <div id="notificationArea"></div>
+
     <script src="js/properties.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/achievements.js"></script> <script src="js/main.js"></script>
 </body>
 </html>

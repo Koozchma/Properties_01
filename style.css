@@ -1,3 +1,4 @@
+/* === Existing styles from previous steps should be here === */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap');
 
 body {
@@ -37,12 +38,12 @@ header h1 {
     text-shadow: 0 0 10px rgba(228, 63, 90, 0.5);
 }
 
-section {
-    margin-bottom: 35px;
+section { /* This will now apply to sections within tabs */
+    margin-bottom: 0; /* Remove bottom margin as panels will handle spacing */
     padding: 20px;
     background-color: #1b1b2f; /* Slightly lighter than body for sections */
     border-radius: 8px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    /* box-shadow: inset 0 0 10px rgba(0,0,0,0.2); Remove inset shadow if redundant with panel structure */
 }
 
 section h2 {
@@ -55,6 +56,12 @@ section h2 {
 }
 
 /* Stats Display */
+#stats-section { /* Keep this section styled as before, it's outside tabs */
+     margin-bottom: 35px;
+     padding: 20px;
+     background-color: #1b1b2f;
+     border-radius: 8px;
+}
 #stats-section h2 {
     color: #1abc9c; /* Teal for "Your Empire" */
 }
@@ -89,7 +96,64 @@ section h2 {
 #ipsDisplay { color: #2ecc71; } /* Green for IPS stat */
 
 
-/* Properties Grid */
+/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    margin-bottom: 25px; /* Space between tabs and content */
+    /* border-bottom: 2px solid #1f4068; */ /* Optional: if you want a line under the whole tab bar */
+}
+
+.tab-button {
+    font-family: 'Orbitron', sans-serif;
+    padding: 12px 25px; /* Increased padding */
+    cursor: pointer;
+    border: none; /* Remove default border */
+    border-bottom: 3px solid transparent; /* For active indicator positioning */
+    background-color: #2c3e50; /* Dark slate blue for inactive tabs */
+    color: #bdc3c7; /* Light grey for inactive text */
+    font-size: 1.1em;
+    font-weight: 500;
+    margin-right: 8px; /* Spacing between tabs */
+    border-radius: 6px 6px 0 0; /* Rounded top corners */
+    transition: background-color 0.3s, color 0.3s, border-bottom-color 0.3s;
+}
+
+.tab-button:hover {
+    background-color: #34495e; /* Slightly lighter on hover */
+    color: #ffffff;
+}
+
+.tab-button.active {
+    background-color: #1b1b2f; /* Match active panel section background */
+    color: #e43f5a; /* Striking red-pink accent for active text */
+    border-bottom-color: #e43f5a; /* Underline for active tab */
+    /* Or if you prefer the border to be on top of the content section:
+    border-top: 1px solid #1f4068;
+    border-left: 1px solid #1f4068;
+    border-right: 1px solid #1f4068;
+    border-bottom: 3px solid #1b1b2f; makes it look connected to content below
+    */
+}
+
+/* Tab Panels */
+#tabContentContainer {
+    /* background-color: #1b1b2f;  If you want a container around the active panel */
+    /* border-radius: 0 0 8px 8px; */
+    /* padding: 1px; Solves margin collapse if sections inside have top margin */
+}
+
+.tab-panel {
+    display: none; /* Hide inactive panels by default */
+    /* No extra padding/margin here, let the <section> inside handle it */
+}
+
+.tab-panel.active {
+    display: block; /* Show active panel */
+    /* The <section> inside the active panel will have its usual styling */
+}
+
+
+/* Properties Grid (applies within active tab) */
 .properties-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Slightly larger cards */
@@ -235,12 +299,10 @@ section h2 {
     opacity: 0.7;
 }
 
-/* Make affordable buttons stand out more */
 .property-card button.btn-affordable {
-     /* Already handled by default button styles, but could add specific highlight */
     box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); /* Glow for affordable upgrade */
 }
-.property-card button.btn-affordable.purchase-button {
+.property-card button.btn-affordable.purchase-button { /* Specific class for purchase if needed */
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); /* Glow for affordable purchase */
 }
 

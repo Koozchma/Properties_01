@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.prestigeUpgrades = {}; // Global for access by prestige_upgrades.js descriptions
 
     // Constants
-    const SAVE_KEY_PREFIX = 'realmTycoon_v1_'; // Added a version to key in case of structure changes
+    const SAVE_KEY_PREFIX = 'realmTycoon_v1.1'; // Added a version to key in case of structure changes
     const GAME_STATE_KEY = SAVE_KEY_PREFIX + 'gameState';
     const BASE_STARTING_GOLD = 10;
     const ASCEND_GOLD_REQUIREMENT_FIRST = 1e15; // 1 Quadrillion
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const REALM_SHARD_CALC_BASE_GOLD = 1e12; // Gold threshold for shard formula to kick in meaningfully
     const REALM_SHARD_CALC_POWER = 1.8;
     const REALM_SHARD_CALC_MULTIPLIER = 3;
-    const BASE_OFFLINE_SECONDS_CAP = 2 * 60 * 60; // 2 hours
+    const BASE_OFFLINE_SECONDS_CAP = 3 * 60 * 60; // 2 hours
 
     // DOM Elements
     const goldDisplay = document.getElementById('goldDisplay');
@@ -120,19 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (savedState.ownedProperties[propId]) {
                             const savedProp = savedState.ownedProperties[propId];
                             ownedProperties[propId] = {
-                                quantity: parseInt(savedProp.quantity) || 0,
-                                level: parseInt(savedProp.level) || 0,
+                                quantity: parseInt(savedProp.quantity) || 0, level: parseInt(savedProp.level) || 0,
                                 currentIncomePerUnit: parseFloat(savedProp.currentIncomePerUnit) || 0,
                                 currentUpgradeCost: parseFloat(savedProp.currentUpgradeCost) || 0
                             };
                             const propData = window.gameProperties.find(p => p.id === propId);
                             if (propData) {
-                                if (ownedProperties[propId].level === 0 && ownedProperties[propId].currentIncomePerUnit === 0 && propData.baseIncome > 0) {
+                                if (ownedProperties[propId].level === 0 && ownedProperties[propId].currentIncomePerUnit === 0 && propData.baseIncome > 0)
                                     ownedProperties[propId].currentIncomePerUnit = propData.baseIncome;
-                                }
-                                if (ownedProperties[propId].level === 0 && ownedProperties[propId].currentUpgradeCost === 0 && propData.upgradeCost > 0) {
+                                if (ownedProperties[propId].level === 0 && ownedProperties[propId].currentUpgradeCost === 0 && propData.upgradeCost > 0)
                                     ownedProperties[propId].currentUpgradeCost = propData.upgradeCost;
-                                }
                             }
                         }
                     }
@@ -152,17 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return savedState;
             }
         } catch (e) {
-            console.error("Error loading game:", e);
-            showNotification("Error loading save. Starting fresh.", true);
+            console.error("Error loading game:", e); showNotification("Error loading save. Starting fresh.", true);
             localStorage.removeItem(GAME_STATE_KEY);
         }
-        gold = BASE_STARTING_GOLD;
-        totalIPS = 0;
-        ownedProperties = {};
-        totalGoldEarnedThisRun = 0;
-        timesAscended = 0;
-        realmShards = 0;
-        window.prestigeUpgrades = {};
+        gold = BASE_STARTING_GOLD + getStartingGoldBonus(); // Apply bonus even on fresh start if somehow loaded prestige
+        totalIPS = 0; ownedProperties = {}; totalGoldEarnedThisRun = 0; timesAscended = 0; realmShards = 0; window.prestigeUpgrades = {};
         if(window.achievementsList) window.achievementsList.forEach(ach => ach.unlocked = false);
         recalculateTotalIPS();
         return null;
@@ -564,6 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return timesAscended === 0 ? ASCEND_GOLD_REQUIREMENT_FIRST :
                ASCEND_GOLD_REQUIREMENT_FIRST * Math.pow(ASCEND_GOLD_REQUIREMENT_SUBSEQUENT_FACTOR, timesAscended);
     }
+
     function calculatePotentialRealmShards() {
         const requirement = getAscendGoldRequirement();
         if (totalGoldEarnedThisRun < requirement) return 0;
@@ -575,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shards *= (1 + getRealmShardGainBonus());
         return Math.max(1, Math.floor(shards));
     }
+
     function checkAscendEligibility() {
         const requirement = getAscendGoldRequirement();
         const canAscend = totalGoldEarnedThisRun >= requirement;
@@ -593,21 +586,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
     function performAscension() {
         const requirement = getAscendGoldRequirement();
         if (totalGoldEarnedThisRun < requirement) { showNotification("Not yet ready to Ascend!", true); return; }
         const shardsGained = calculatePotentialRealmShards();
         if (!confirm(`Are you sure you want to Ascend?\n\nThis will reset your current run's Gold, Properties, and Property Upgrades.\nYou will gain approx. ${formatNumber(shardsGained, true)} Realm Shards.\n\nAchievements, total Realm Shards, and Prestige Upgrades are kept.`)) return;
-
-        realmShards += shardsGained;
-        timesAscended++;
+        realmShards += shardsGained; timesAscended++;
         gold = BASE_STARTING_GOLD + getStartingGoldBonus();
-        ownedProperties = {};
-        totalGoldEarnedThisRun = 0;
+        ownedProperties = {}; totalGoldEarnedThisRun = 0;
         recalculateTotalIPS();
         showNotification(`✨ Ascended! Gained ${formatNumber(shardsGained, true)} RS! Total: ${formatNumber(realmShards, true)}. Times Ascended: ${timesAscended}. ✨`);
-        saveGame();
-        loadPropertiesForSale(); renderOwnedProperties(); renderAchievements(); renderPrestigeShop();
+        saveGame(); loadPropertiesForSale(); renderOwnedProperties(); renderAchievements(); renderPrestigeShop();
         updateDisplays(); checkAscendEligibility();
         const availablePropsTabBtn = document.querySelector('.tab-button[data-tab="availablePropertiesTabContent"]');
         if(availablePropsTabBtn) availablePropsTabBtn.click();
@@ -616,10 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPrestigeShop() {
         if (!prestigeUpgradeShopContainer) return;
         if (!window.prestigeUpgradesList) { prestigeUpgradeShopContainer.innerHTML = '<p>Prestige upgrades definition file not loaded.</p>'; return; }
-
         prestigeUpgradeShopContainer.innerHTML = '';
         const shopHeader = document.createElement('p');
-        shopHeader.innerHTML = `Your available Realm Shards: <span id="shopRealmShardsDisplay" style="color: var(--primary-accent-color); font-weight: bold;">${formatNumber(realmShards, true)}</span> RS`;
+        shopHeader.innerHTML = `Your available Realm Shards: <span id="shopRealmShardsDisplayCurrent" style="color: var(--primary-accent-color); font-weight: bold;">${formatNumber(realmShards, true)}</span> RS`; // Changed ID slightly
         prestigeUpgradeShopContainer.appendChild(shopHeader);
 
         window.prestigeUpgradesList.forEach(upgradeData => {
@@ -627,16 +616,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const cost = upgradeData.costFormula(currentLevel);
             const canAfford = realmShards >= cost;
             const isMaxLevel = upgradeData.maxLevel !== null && currentLevel >= upgradeData.maxLevel;
-            let description = upgradeData.descriptionFunction(currentLevel); // Pass currentLevel for dynamic text
+            // Description function now directly accesses window.prestigeUpgrades via getPrestigeUpgradeLevel
+            // or by using currentLevel and upgradeData.effectPerLevel to construct current bonus text.
+            // The prestige_upgrades.js file's description functions were updated to be self-contained.
+            let description = upgradeData.descriptionFunction(currentLevel);
+
 
             const card = document.createElement('div');
             card.className = 'prestige-upgrade-card';
             card.innerHTML = `
                 <h4>${upgradeData.name} (Lvl ${currentLevel}${upgradeData.maxLevel ? '/'+upgradeData.maxLevel : ''})</h4>
                 <p>${description}</p>
-                ${!isMaxLevel ? `<p class="cost">Next Level Cost: ${formatNumber(cost, true)} RS</p>` : ''}
+                ${!isMaxLevel ? `<p class="cost">Next Lvl Cost: ${formatNumber(cost, true)} RS</p>` : '<p class="cost">Max Level Reached!</p>'}
                 <button data-upgrade-id="${upgradeData.id}" class="${canAfford && !isMaxLevel ? 'btn-affordable' : ''}" ${!canAfford || isMaxLevel ? 'disabled' : ''}>
-                    ${isMaxLevel ? 'Maxed Out' : 'Upgrade'}
+                    ${isMaxLevel ? 'Maxed' : 'Upgrade'}
                 </button>
             `;
             const upgradeButton = card.querySelector('button');
@@ -645,11 +638,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             prestigeUpgradeShopContainer.appendChild(card);
         });
+         // Update the shop specific shard display
+        const shopShardsElem = document.getElementById('shopRealmShardsDisplayCurrent');
+        if (shopShardsElem) shopShardsElem.textContent = formatNumber(realmShards, true);
     }
 
     function buyPrestigeUpgrade(upgradeId) {
         const upgradeData = window.prestigeUpgradesList.find(upg => upg.id === upgradeId);
-        if (!upgradeData) return;
+        if (!upgradeData) { console.error("Upgrade data not found for: " + upgradeId); return; }
         const currentLevel = getPrestigeUpgradeLevel(upgradeId);
         if (upgradeData.maxLevel !== null && currentLevel >= upgradeData.maxLevel) {
             showNotification("Upgrade at max level!", true); return;
@@ -659,9 +655,13 @@ document.addEventListener('DOMContentLoaded', () => {
             realmShards -= cost;
             window.prestigeUpgrades[upgradeId] = currentLevel + 1;
             showNotification(`${upgradeData.name} upgraded to Level ${window.prestigeUpgrades[upgradeId]}!`);
-            saveGame();
-            recalculateTotalIPS(); updateDisplays(); renderPrestigeShop();
-            loadPropertiesForSale(); renderOwnedProperties(); // Refresh property costs due to potential global cost reduction
+            saveGame(); recalculateTotalIPS(); updateDisplays(); renderPrestigeShop();
+            // If cost reduction was bought, property costs displayed need to update
+            if (upgradeData.type === 'cost_reduction_all') {
+                loadPropertiesForSale(); renderOwnedProperties();
+            }
+            // If starting gold was bought, it applies next ascension.
+            // If offline boosts were bought, they apply next time offline progress is calculated.
         } else {
             showNotification("Not enough Realm Shards!", true);
         }

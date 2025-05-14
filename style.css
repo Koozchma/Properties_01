@@ -1,10 +1,9 @@
-/* === Existing styles from previous steps should be here === */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap');
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #1a1a2e; /* Dark blue-purple background */
-    color: #e0e0e0; /* Light grey text */
+    background-color: #1a1a2e; /* Base background */
+    color: #e0e0e0; /* Default light text */
     margin: 0;
     padding: 20px;
     display: flex;
@@ -15,65 +14,64 @@ body {
 }
 
 .container {
-    background-color: #162447; /* Darker blue container */
+    background-color: #162447; /* Main container background */
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 1000px; /* Slightly wider for better layout */
+    max-width: 1000px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
+/* Sticky Header Area Styling */
+.sticky-top-area {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #162447; /* Match container background */
     padding-bottom: 15px;
-    border-bottom: 2px solid #1f4068; /* Darker accent blue */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-header h1 {
-    font-family: 'Orbitron', sans-serif; /* Sci-fi/gamey font */
-    color: #e43f5a; /* Striking red-pink accent */
+header { /* Game Title Header */
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #1f4068; /* Dark blue accent border */
+}
+
+header h1 { /* Realm Tycoon: Ascendancy */
+    font-family: 'Orbitron', sans-serif;
+    color: #00CFE8; /* NEW Primary Accent - Electric Blue/Cyan */
     font-size: 2.8em;
     margin: 0;
-    text-shadow: 0 0 10px rgba(228, 63, 90, 0.5);
+    text-shadow: 0 0 10px rgba(0, 207, 232, 0.5); /* Glow matching new primary accent */
 }
 
-section { /* This will now apply to sections within tabs */
-    margin-bottom: 0; /* Remove bottom margin as panels will handle spacing */
-    padding: 20px;
-    background-color: #1b1b2f; /* Slightly lighter than body for sections */
-    border-radius: 8px;
-    /* box-shadow: inset 0 0 10px rgba(0,0,0,0.2); Remove inset shadow if redundant with panel structure */
+/* Stats Section Styling (within sticky area) */
+#stats-section {
+     margin-bottom: 0;
+     padding: 15px 20px 0 20px;
+     background-color: transparent;
+     border-radius: 0;
+     box-shadow: none;
 }
-
-section h2 {
-    font-family: 'Orbitron', sans-serif;
-    color: #f0a500; /* Gold/Yellow accent for section titles */
+#stats-section h2 { /* "Your Empire" title */
+    font-family: 'Orbitron', sans-serif; /* Keep Orbitron for consistency */
+    color: #ecf0f1; /* NEW - Bright Neutral White/Light Grey */
     margin-top: 0;
-    border-bottom: 1px solid #1f4068;
     padding-bottom: 10px;
     font-size: 1.8em;
+    border-bottom: 1px solid #1f4068; /* Dark blue accent border */
 }
 
-/* Stats Display */
-#stats-section { /* Keep this section styled as before, it's outside tabs */
-     margin-bottom: 35px;
-     padding: 20px;
-     background-color: #1b1b2f;
-     border-radius: 8px;
-}
-#stats-section h2 {
-    color: #1abc9c; /* Teal for "Your Empire" */
-}
-
-.stats-display {
+.stats-display { /* The Gold and IPS boxes */
     display: flex;
     justify-content: space-around;
     align-items: center;
-    font-size: 1.2em; /* Increased font size */
-    font-weight: 500; /* Medium weight */
-    padding: 15px 0;
-    background-color: rgba(0,0,0,0.1);
+    font-size: 1.2em;
+    font-weight: 500;
+    padding: 10px 0;
     border-radius: 6px;
 }
 
@@ -81,40 +79,39 @@ section h2 {
     margin: 5px 10px;
     padding: 10px 20px;
     border-radius: 4px;
-    background-color: #1f4068; /* Dark accent blue for stat boxes */
-    min-width: 200px; /* Ensure consistent width */
+    background-color: #1f4068; /* Dark blue accent background for stat boxes */
+    min-width: 200px;
     text-align: center;
 }
 
 .stats-display span {
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     color: #ffffff; /* White for numbers */
     margin-left: 8px;
-    font-size: 1.3em; /* Larger numbers */
+    font-size: 1.3em;
 }
-#goldDisplay { color: #f0a500; } /* Gold color for gold stat */
-#ipsDisplay { color: #2ecc71; } /* Green for IPS stat */
+#goldDisplay { color: #f0a500; } /* Keep Thematic Gold */
+#ipsDisplay { color: #2ecc71; } /* Keep Positive Green for IPS */
 
 
 /* Tab Navigation */
 .tab-navigation {
     display: flex;
-    margin-bottom: 25px; /* Space between tabs and content */
-    /* border-bottom: 2px solid #1f4068; */ /* Optional: if you want a line under the whole tab bar */
+    margin-bottom: 25px;
 }
 
 .tab-button {
     font-family: 'Orbitron', sans-serif;
-    padding: 12px 25px; /* Increased padding */
+    padding: 12px 25px;
     cursor: pointer;
-    border: none; /* Remove default border */
-    border-bottom: 3px solid transparent; /* For active indicator positioning */
-    background-color: #2c3e50; /* Dark slate blue for inactive tabs */
+    border: none;
+    border-bottom: 3px solid transparent;
+    background-color: #2c3e50; /* Dark Slate Blue for inactive tabs */
     color: #bdc3c7; /* Light grey for inactive text */
     font-size: 1.1em;
     font-weight: 500;
-    margin-right: 8px; /* Spacing between tabs */
-    border-radius: 6px 6px 0 0; /* Rounded top corners */
+    margin-right: 8px;
+    border-radius: 6px 6px 0 0;
     transition: background-color 0.3s, color 0.3s, border-bottom-color 0.3s;
 }
 
@@ -125,51 +122,52 @@ section h2 {
 
 .tab-button.active {
     background-color: #1b1b2f; /* Match active panel section background */
-    color: #e43f5a; /* Striking red-pink accent for active text */
-    border-bottom-color: #e43f5a; /* Underline for active tab */
-    /* Or if you prefer the border to be on top of the content section:
-    border-top: 1px solid #1f4068;
-    border-left: 1px solid #1f4068;
-    border-right: 1px solid #1f4068;
-    border-bottom: 3px solid #1b1b2f; makes it look connected to content below
-    */
+    color: #00CFE8; /* NEW Primary Accent for active tab text */
+    border-bottom-color: #00CFE8; /* NEW Primary Accent for active tab underline */
 }
 
-/* Tab Panels */
-#tabContentContainer {
-    /* background-color: #1b1b2f;  If you want a container around the active panel */
-    /* border-radius: 0 0 8px 8px; */
-    /* padding: 1px; Solves margin collapse if sections inside have top margin */
+/* Tab Panels & Content Sections */
+#tabContentContainer { }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+#properties-section-content,
+#owned-properties-section-content {
+    margin-bottom: 0;
+    padding: 20px;
+    background-color: #1b1b2f; /* Background for content within tabs */
+    border-radius: 8px;
 }
 
-.tab-panel {
-    display: none; /* Hide inactive panels by default */
-    /* No extra padding/margin here, let the <section> inside handle it */
-}
-
-.tab-panel.active {
-    display: block; /* Show active panel */
-    /* The <section> inside the active panel will have its usual styling */
+#properties-section-content h2,
+#owned-properties-section-content h2 { /* Titles like "Purchase New Properties" */
+    font-family: 'Orbitron', sans-serif; /* Keep Orbitron */
+    color: #ecf0f1; /* NEW - Bright Neutral White/Light Grey */
+    margin-top: 0;
+    border-bottom: 1px solid #1f4068; /* Dark blue accent border */
+    padding-bottom: 10px;
+    font-size: 1.8em;
 }
 
 
 /* Properties Grid (applies within active tab) */
 .properties-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Slightly larger cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
 .property-card {
     background-color: #2c3e50; /* Dark slate blue for cards */
-    border: 1px solid #1f4068;
+    border: 1px solid #1f4068; /* Dark blue accent border */
     border-radius: 8px;
     padding: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes button to bottom if card height varies */
+    justify-content: space-between;
 }
 
 .property-card:hover {
@@ -177,10 +175,10 @@ section h2 {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
-.property-card h3 {
+.property-card h3 { /* Property Names */
     margin-top: 0;
     margin-bottom: 10px;
-    color: #e43f5a; /* Red-pink accent for property names */
+    color: #00CFE8; /* NEW Primary Accent */
     font-size: 1.4em;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
@@ -197,365 +195,33 @@ section h2 {
     font-size: 0.9em;
     color: #95a5a6; /* Softer grey for description */
     margin-bottom: 12px;
-    min-height: 40px; /* Give some space for descriptions */
-}
-
-.property-cost {
-    font-weight: bold;
-}
-.property-cost.unaffordable {
-    color: #e74c3c; /* Alizarin Crimson for unaffordable costs */
-}
-.property-cost.affordable {
-    color: #2ecc71; /* Emerald green for affordable costs */
-}
-
-
-/* Tier Indicators */
-.tier-indicator {
-    font-size: 0.8em;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 4px;
-    color: #fff;
-    margin-bottom: 8px;
-    display: inline-block;
-}
-.tier-1 { background-color: #3498db; } /* Peter River Blue */
-.tier-2 { background-color: #2ecc71; } /* Emerald Green */
-.tier-3 { background-color: #f1c40f; color: #333; } /* Sun Flower Yellow */
-.tier-4 { background-color: #e67e22; } /* Carrot Orange */
-.tier-5 { background-color: #9b59b6; } /* Amethyst Purple */
-
-
-/* Level Progress Bar */
-.level-progress-container {
-    width: 100%;
-    background-color: #1f4068; /* Darker blue background for bar */
-    border-radius: 4px;
-    height: 12px;
-    margin: 8px 0;
-    overflow: hidden; /* Ensures inner bar stays rounded */
-}
-
-.level-progress-bar {
-    height: 100%;
-    background-color: #e43f5a; /* Red-pink accent for progress */
-    border-radius: 4px 0 0 4px; /* Round left corners if not full */
-    transition: width 0.3s ease-out;
-    text-align: center;
-    font-size: 0.7em;
-    line-height: 12px; /* Vertically center text */
-    color: #fff;
-}
-
-.owned-property-details p {
-    margin: 6px 0;
-}
-.owned-property-details .income-gain {
-    color: #2ecc71; /* Green for positive income gain */
-    font-weight: 500;
-}
-
-/* Buttons */
-.property-card button {
-    background-color: #3498db; /* Peter River Blue */
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    text-align: center;
-    text-decoration: none;
-    display: block; /* Make button take full width */
-    width: 100%;
-    font-size: 1.1em;
-    font-weight: 500;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    margin-top: 15px; /* Space above button */
-    box-sizing: border-box; /* Ensure padding doesn't expand beyond width */
-}
-
-.property-card button:hover:not(:disabled) {
-    background-color: #2980b9; /* Darker blue on hover */
-    transform: translateY(-1px);
-}
-
-.property-card button:active:not(:disabled) {
-    transform: translateY(0px);
-}
-
-.property-card button.upgrade-button {
-    background-color: #2ecc71; /* Emerald Green for upgrade */
-}
-.property-card button.upgrade-button:hover:not(:disabled) {
-    background-color: #27ae60; /* Darker green */
-}
-
-.property-card button:disabled {
-    background-color: #7f8c8d; /* Concrete grey for disabled */
-    color: #bdc3c7;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.property-card button.btn-affordable {
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); /* Glow for affordable upgrade */
-}
-.property-card button.btn-affordable.purchase-button { /* Specific class for purchase if needed */
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); /* Glow for affordable purchase */
-}
-
-
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #1f4068;
-    font-size: 0.9em;
-    color: #7f8c8d;
-}
-
-/* === Existing styles from previous steps should be here === */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap');
-
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #1a1a2e;
-    color: #e0e0e0;
-    margin: 0;
-    /* Add padding to the top of the body if sticky header has a fixed height and position:fixed is used.
-       For position:sticky, this is usually not needed unless an offset is desired. */
-    padding: 20px; /* Existing padding */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    line-height: 1.6;
-}
-
-.container {
-    background-color: #162447;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 1000px;
-}
-
-/* Sticky Header Area Styling */
-.sticky-top-area {
-    position: -webkit-sticky; /* For Safari */
-    position: sticky;
-    top: 0; /* Stick to the top of the viewport */
-    z-index: 1000; /* Ensure it stays on top of other content */
-    background-color: #162447; /* Match container background to prevent transparency issues */
-    padding-bottom: 15px; /* Add some space below the sticky area before tabs */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: subtle shadow to show elevation */
-}
-
-header { /* Styles for the header within sticky area */
-    text-align: center;
-    margin-bottom: 20px; /* Reduced margin as padding-bottom on sticky-top-area handles outer spacing */
-    padding-bottom: 15px;
-    border-bottom: 2px solid #1f4068;
-}
-
-header h1 {
-    font-family: 'Orbitron', sans-serif;
-    color: #e43f5a;
-    font-size: 2.8em;
-    margin: 0;
-    text-shadow: 0 0 10px rgba(228, 63, 90, 0.5);
-}
-
-/* Stats Section Styling (within sticky area) */
-#stats-section {
-     margin-bottom: 0; /* Remove margin as sticky-top-area handles spacing below */
-     padding: 15px 20px 0 20px; /* Adjust padding if needed, top padding to space from H1 */
-     background-color: transparent; /* Should inherit from sticky-top-area or be explicitly set */
-     border-radius: 0; /* Remove radius if it's part of a larger sticky block */
-     box-shadow: none; /* Remove shadow if it's part of a larger sticky block */
-}
-#stats-section h2 { /* Title "Your Empire" */
-    color: #1abc9c;
-    margin-top: 0;
-    padding-bottom: 10px;
-    font-size: 1.8em;
-    border-bottom: 1px solid #1f4068; /* Keep this border */
-}
-
-.stats-display { /* The Gold and IPS boxes */
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    font-size: 1.2em;
-    font-weight: 500;
-    padding: 10px 0; /* Adjusted padding */
-    /* background-color: rgba(0,0,0,0.1);  Can remove if sticky-top-area has solid bg */
-    border-radius: 6px;
-}
-
-.stats-display p {
-    margin: 5px 10px;
-    padding: 10px 20px;
-    border-radius: 4px;
-    background-color: #1f4068;
-    min-width: 200px;
-    text-align: center;
-}
-
-.stats-display span {
-    font-weight: 700;
-    color: #ffffff;
-    margin-left: 8px;
-    font-size: 1.3em;
-}
-#goldDisplay { color: #f0a500; }
-#ipsDisplay { color: #2ecc71; }
-
-
-/* Tab Navigation */
-.tab-navigation {
-    display: flex;
-    margin-bottom: 25px;
-    /* margin-top: 15px; /* Add margin-top if sticky area doesn't have padding-bottom */
-}
-
-.tab-button {
-    font-family: 'Orbitron', sans-serif;
-    padding: 12px 25px;
-    cursor: pointer;
-    border: none;
-    border-bottom: 3px solid transparent;
-    background-color: #2c3e50;
-    color: #bdc3c7;
-    font-size: 1.1em;
-    font-weight: 500;
-    margin-right: 8px;
-    border-radius: 6px 6px 0 0;
-    transition: background-color 0.3s, color 0.3s, border-bottom-color 0.3s;
-}
-
-.tab-button:hover {
-    background-color: #34495e;
-    color: #ffffff;
-}
-
-.tab-button.active {
-    background-color: #1b1b2f; /* Match active panel section background */
-    color: #e43f5a;
-    border-bottom-color: #e43f5a;
-}
-
-/* Tab Panels & Content Sections */
-#tabContentContainer {
-    /* styles for the container of tab panels if needed */
-}
-
-.tab-panel {
-    display: none;
-}
-
-.tab-panel.active {
-    display: block;
-}
-
-/* Styling for the sections INSIDE the tabs */
-#properties-section-content, 
-#owned-properties-section-content {
-    margin-bottom: 0;
-    padding: 20px;
-    background-color: #1b1b2f;
-    border-radius: 8px;
-}
-
-#properties-section-content h2, 
-#owned-properties-section-content h2 {
-    font-family: 'Orbitron', sans-serif;
-    color: #f0a500;
-    margin-top: 0;
-    border-bottom: 1px solid #1f4068;
-    padding-bottom: 10px;
-    font-size: 1.8em;
-}
-
-
-/* Properties Grid (applies within active tab) */
-.properties-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.property-card {
-    background-color: #2c3e50;
-    border: 1px solid #1f4068;
-    border-radius: 8px;
-    padding: 18px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-}
-
-.property-card h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #e43f5a;
-    font-size: 1.4em;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-}
-
-.property-card p {
-    margin: 8px 0;
-    font-size: 0.95em;
-    color: #bdc3c7;
-}
-
-.property-card .description {
-    font-style: italic;
-    font-size: 0.9em;
-    color: #95a5a6;
-    margin-bottom: 12px;
     min-height: 40px;
 }
 
-.property-cost {
-    font-weight: bold;
-}
-.property-cost.unaffordable { color: #e74c3c; }
-.property-cost.affordable { color: #2ecc71; }
+.property-cost { font-weight: bold; }
+.property-cost.unaffordable { color: #e74c3c; } /* Keep Red for unaffordable */
+.property-cost.affordable { color: #2ecc71; } /* Keep Green for affordable */
 
 
-/* Tier Indicators */
+/* Tier Indicators - More Uniform */
 .tier-indicator {
     font-size: 0.8em;
     font-weight: bold;
     padding: 3px 8px;
     border-radius: 4px;
-    color: #fff;
+    color: #ecf0f1; /* Bright white/light grey text for tier number */
+    background-color: #1f4068; /* NEW - Consistent Dark Blue Accent background */
     margin-bottom: 8px;
     display: inline-block;
 }
-.tier-1 { background-color: #3498db; }
-.tier-2 { background-color: #2ecc71; }
-.tier-3 { background-color: #f1c40f; color: #333; }
-.tier-4 { background-color: #e67e22; }
-.tier-5 { background-color: #9b59b6; }
+/* Remove individual tier background colors for uniformity */
+/* .tier-1, .tier-2, .tier-3, .tier-4, .tier-5 { background-color: #1f4068; } */ /* This is handled by the general .tier-indicator now */
 
 
 /* Level Progress Bar */
 .level-progress-container {
     width: 100%;
-    background-color: #1f4068;
+    background-color: #1f4068; /* Dark blue accent background for bar container */
     border-radius: 4px;
     height: 12px;
     margin: 8px 0;
@@ -564,21 +230,21 @@ header h1 {
 
 .level-progress-bar {
     height: 100%;
-    background-color: #e43f5a;
+    background-color: #00CFE8; /* NEW Primary Accent for progress fill */
     border-radius: 4px 0 0 4px;
     transition: width 0.3s ease-out;
     text-align: center;
     font-size: 0.7em;
     line-height: 12px;
-    color: #fff;
+    color: #162447; /* Dark text on bright bar for contrast */
 }
 
 .owned-property-details p { margin: 6px 0; }
-.owned-property-details .income-gain { color: #2ecc71; font-weight: 500; }
+.owned-property-details .income-gain { color: #2ecc71; font-weight: 500; } /* Keep Green for IPS gain */
 
 /* Buttons */
-.property-card button {
-    background-color: #3498db;
+.property-card button { /* Default button style - will be purchase button */
+    background-color: #007B8A; /* Darker shade of Primary Accent for base purchase button */
     color: white;
     border: none;
     padding: 12px 18px;
@@ -596,31 +262,50 @@ header h1 {
 }
 
 .property-card button:hover:not(:disabled) {
-    background-color: #2980b9;
+    background-color: #00CFE8; /* NEW Primary Accent on hover for purchase */
     transform: translateY(-1px);
 }
 
+.property-card button.purchase-button.btn-affordable,
+.property-card button.purchase-button:hover:not(:disabled) { /* Ensure hover is primary accent */
+    background-color: #00CFE8; /* NEW Primary Accent for affordable purchase */
+}
+
+
 .property-card button:active:not(:disabled) { transform: translateY(0px); }
 
-.property-card button.upgrade-button { background-color: #2ecc71; }
-.property-card button.upgrade-button:hover:not(:disabled) { background-color: #27ae60; }
+.property-card button.upgrade-button {
+    background-color: #27ae60; /* Darker Green for base upgrade button */
+}
+.property-card button.upgrade-button:hover:not(:disabled) {
+    background-color: #2ecc71; /* Keep Green for upgrade button hover */
+}
+.property-card button.upgrade-button.btn-affordable {
+     background-color: #2ecc71; /* Keep Green for affordable upgrade */
+}
+
 
 .property-card button:disabled {
-    background-color: #7f8c8d;
+    background-color: #7f8c8d; /* Concrete grey for disabled */
     color: #bdc3c7;
     cursor: not-allowed;
     opacity: 0.7;
 }
 
-.property-card button.btn-affordable { box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
-.property-card button.btn-affordable.purchase-button { box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+/* Button Glows */
+.property-card button.btn-affordable.purchase-button {
+    box-shadow: 0 0 10px rgba(0, 207, 232, 0.6); /* Glow matching NEW Primary Accent */
+}
+.property-card button.btn-affordable.upgrade-button {
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); /* Keep Green glow for upgrade */
+}
 
 
 footer {
     text-align: center;
     margin-top: 40px;
     padding-top: 20px;
-    border-top: 1px solid #1f4068;
+    border-top: 1px solid #1f4068; /* Dark blue accent border */
     font-size: 0.9em;
-    color: #7f8c8d;
+    color: #7f8c8d; /* Muted grey for footer text */
 }

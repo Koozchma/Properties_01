@@ -2,47 +2,72 @@ document.addEventListener('DOMContentLoaded', () => {
     // Game State
     let gold = 0.0;
     let totalIPS = 0.0;
-    const ownedProperties = {}; // Stores quantity, level, currentIncomePerUnit, currentUpgradeCost
+    const ownedProperties = {};
 
     // DOM Elements
     const goldDisplay = document.getElementById('goldDisplay');
     const ipsDisplay = document.getElementById('ipsDisplay');
     const propertiesContainer = document.getElementById('propertiesContainer');
     const ownedPropertiesContainer = document.getElementById('ownedPropertiesContainer');
+    const currentYearSpan = document.getElementById('currentYear');
+
+    // Tab Navigation Elements
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    // Function to handle tab switching
+    function setupTabs() {
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and panels
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+
+                // Add active class to the clicked button and corresponding panel
+                button.classList.add('active');
+                const targetTabId = button.dataset.tab; // e.g., "availablePropertiesTabContent"
+                document.getElementById(targetTabId).classList.add('active');
+            });
+        });
+    }
 
     // Initialize Game
     function initGame() {
-        gold = 50.0; // Starting gold as float
+        gold = 50.0;
+        if(currentYearSpan) {
+            currentYearSpan.textContent = new Date().getFullYear();
+        }
+        setupTabs(); // Initialize tab functionality
         loadPropertiesForSale();
+        renderOwnedProperties(); // Initial render for owned properties container
         updateDisplays();
-        setInterval(gameLoop, 1000); // Game loop runs every second
+        setInterval(gameLoop, 1000);
     }
 
     // Game Loop
     function gameLoop() {
-        gold += totalIPS; // Add raw IPS to gold
+        gold += totalIPS;
         updateDisplays();
-        updatePurchaseButtonStates(); // Continuously update button states based on gold
-        updateUpgradeButtonStates();  // Continuously update button states based on gold
+        updatePurchaseButtonStates();
+        updateUpgradeButtonStates();
     }
 
     // Update UI for gold and IPS
     function updateDisplays() {
-        goldDisplay.textContent = formatNumber(gold, true); // True to floor for gold display
-        ipsDisplay.textContent = formatNumber(totalIPS, false); // False to allow decimals for IPS
+        goldDisplay.textContent = formatNumber(gold, true);
+        ipsDisplay.textContent = formatNumber(totalIPS, false);
     }
 
     // Load properties available for purchase into the UI
     function loadPropertiesForSale() {
-        propertiesContainer.innerHTML = ''; // Clear existing
+        propertiesContainer.innerHTML = '';
         window.gameProperties.forEach(prop => {
             const cost = calculatePurchaseCost(prop.id);
             const isAffordable = gold >= cost;
 
             const card = document.createElement('div');
-            card.classList.add('property-card', `tier-${prop.tier}`); // Add tier class
+            card.classList.add('property-card', `tier-${prop.tier}`);
 
-            // Inner div for content to help with flexbox spacing if button is separate
             const contentDiv = document.createElement('div');
             contentDiv.innerHTML = `
                 <span class="tier-indicator tier-${prop.tier}">Tier ${prop.tier}</span>
@@ -57,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             purchaseButton.id = `buy-${prop.id}`;
             purchaseButton.dataset.propertyId = prop.id;
             purchaseButton.textContent = 'Purchase';
-            purchaseButton.classList.add('purchase-button'); // Add class for specific styling if needed
+            purchaseButton.classList.add('purchase-button');
             if (isAffordable) {
                 purchaseButton.classList.add('btn-affordable');
             }
@@ -67,21 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(purchaseButton);
             propertiesContainer.appendChild(card);
         });
-        // Initial state update for buttons after loading
         updatePurchaseButtonStates();
     }
 
-    // Calculate potential income for the next level of a specific property unit
+    // Calculate potential income for the next level
     function calculateNextLevelIncome(propertyId, currentUnitIncome) {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         if (!propData) return currentUnitIncome;
-        // Apply multiplier without flooring here to maintain precision
         return currentUnitIncome * propData.upgradeIncomeMultiplier;
     }
 
-    // Render owned properties and their upgrade options
+    // Render owned properties
     function renderOwnedProperties() {
-        ownedPropertiesContainer.innerHTML = ''; // Clear existing
+        ownedPropertiesContainer.innerHTML = '';
         let hasOwnedAndDisplayableProperties = false;
 
         for (const propId in ownedProperties) {
@@ -92,13 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const progressPercent = (ownedProp.level / propData.maxLevel) * 100;
                 const isUpgradeAffordable = gold >= ownedProp.currentUpgradeCost;
 
-                let upgradeHtml = `<p style="text-align:center; margin-top: 20px;">Max Level Reached!</p>`;
+                let upgradeHtmlSection = `<p style="text-align:center; margin-top: 20px;">Max Level Reached!</p>`;
                 if (ownedProp.level < propData.maxLevel) {
                     const nextLevelIncomePerUnit = calculateNextLevelIncome(propId, ownedProp.currentIncomePerUnit);
                     const incomeGainPerUnit = nextLevelIncomePerUnit - ownedProp.currentIncomePerUnit;
                     const totalIncomeGain = incomeGainPerUnit * ownedProp.quantity;
-
-                    upgradeHtml = `
+                    upgradeHtmlSection = `
                         <p>Upgrade Cost: <span id="upgrade-cost-${propId}" class="property-cost ${isUpgradeAffordable ? 'affordable' : 'unaffordable'}">${formatNumber(ownedProp.currentUpgradeCost, true)}</span> Gold</p>
                         <p class="income-gain">Next Lvl Income/Unit: ${formatNumber(nextLevelIncomePerUnit, false)} IPS</p>
                         <p class="income-gain">IPS Gain per Unit: +${formatNumber(incomeGainPerUnit, false)}</p>
@@ -109,66 +131,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const card = document.createElement('div');
                 card.classList.add('property-card', 'owned-property', `tier-${propData.tier}`);
-
-                // Inner div for content
-                const contentDiv = document.createElement('div');
-                contentDiv.innerHTML = `
-                    <span class="tier-indicator tier-${propData.tier}">Tier ${propData.tier}</span>
-                    <h3>${propData.name} (x${ownedProp.quantity})</h3>
-                    <div class="owned-property-details">
-                        <p>Level: <span id="level-${propId}">${ownedProp.level}</span> / ${propData.maxLevel}</p>
-                        <div class="level-progress-container">
-                            <div class="level-progress-bar" style="width: ${progressPercent}%;">
-                                ${ownedProp.level > 0 && progressPercent > 10 ? Math.floor(progressPercent)+'%' : ''}
+                card.innerHTML = `
+                    <div> <span class="tier-indicator tier-${propData.tier}">Tier ${propData.tier}</span>
+                        <h3>${propData.name} (x${ownedProp.quantity})</h3>
+                        <div class="owned-property-details">
+                            <p>Level: <span id="level-${propId}">${ownedProp.level}</span> / ${propData.maxLevel}</p>
+                            <div class="level-progress-container">
+                                <div class="level-progress-bar" style="width: ${progressPercent}%;">
+                                    ${ownedProp.level > 0 && progressPercent > 10 ? Math.floor(progressPercent)+'%' : ''}
+                                </div>
                             </div>
+                            <p>Current Income/Unit: ${formatNumber(ownedProp.currentIncomePerUnit, false)} IPS</p>
+                            <p>Total Income from Type: ${formatNumber(ownedProp.currentIncomePerUnit * ownedProp.quantity, false)} IPS</p>
                         </div>
-                        <p>Current Income/Unit: ${formatNumber(ownedProp.currentIncomePerUnit, false)} IPS</p>
-                        <p>Total Income from Type: ${formatNumber(ownedProp.currentIncomePerUnit * ownedProp.quantity, false)} IPS</p>
-                    </div>
-                `; // Upgrade HTML will be appended or inserted after this
+                        ${upgradeHtmlSection} </div>
+                `;
+                ownedPropertiesContainer.appendChild(card);
 
-                // Append upgradeHTML to the contentDiv or card directly.
-                // For flex structure, better to keep button separate or ensure upgradeHtml also goes into a div
-                const detailsDiv = contentDiv.querySelector('.owned-property-details');
-                detailsDiv.insertAdjacentHTML('beforeend', upgradeHtml); // Insert after existing details
-
-                card.appendChild(contentDiv);
-
-                // If upgrade button exists, add event listener (it's created via innerHTML now)
                 if (ownedProp.level < propData.maxLevel) {
-                    const upgradeButton = card.querySelector(`#upgrade-${propId}`); // Query within the card
+                    const upgradeButton = card.querySelector(`#upgrade-${propId}`);
                     if (upgradeButton) {
-                         upgradeButton.disabled = !isUpgradeAffordable; // Set initial disabled state
+                        upgradeButton.disabled = !isUpgradeAffordable;
                         upgradeButton.addEventListener('click', () => upgradeProperty(propId));
                     }
                 }
-                ownedPropertiesContainer.appendChild(card);
             }
         }
-        // Show/hide the "Your Holdings" section title based on content
-        const ownedSectionTitle = document.querySelector('#owned-properties-section h2');
-        if (ownedSectionTitle) {
+        const ownedSectionTitle = document.querySelector('#owned-properties-tabContent #owned-properties-section h2');
+        if (ownedSectionTitle) { // Check specifically within the tab
             ownedSectionTitle.style.display = hasOwnedAndDisplayableProperties ? 'block' : 'none';
+            // If no owned properties, maybe show a message in ownedPropertiesContainer
+             if (!hasOwnedAndDisplayableProperties && ownedPropertiesContainer.innerHTML === '') {
+                ownedPropertiesContainer.innerHTML = '<p style="text-align:center; color: #95a5a6;">You do not own any properties yet. Purchase some from the "Available Properties" tab!</p>';
+            }
         }
-        // Initial state update for upgrade buttons after rendering
         updateUpgradeButtonStates();
     }
 
-    // Calculate Cost for next purchase of a property
+
     function calculatePurchaseCost(propertyId) {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         const ownedCount = ownedProperties[propertyId] ? ownedProperties[propertyId].quantity : 0;
         return Math.floor(propData.baseCost * Math.pow(propData.costMultiplier, ownedCount));
     }
 
-    // Calculate Cost for next upgrade of a property
     function calculateUpgradeCost(propertyId) {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         const ownedProp = ownedProperties[propertyId];
         return Math.floor(propData.upgradeCost * Math.pow(propData.upgradeCostMultiplier, ownedProp.level));
     }
 
-    // Purchase Property Logic
     function purchaseProperty(propertyId) {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         const cost = calculatePurchaseCost(propertyId);
@@ -177,68 +189,53 @@ document.addEventListener('DOMContentLoaded', () => {
             gold -= cost;
             if (!ownedProperties[propertyId]) {
                 ownedProperties[propertyId] = {
-                    quantity: 0,
-                    level: 0,
+                    quantity: 0, level: 0,
                     currentIncomePerUnit: propData.baseIncome,
                     currentUpgradeCost: propData.upgradeCost
                 };
             }
             ownedProperties[propertyId].quantity++;
-            totalIPS += ownedProperties[propertyId].currentIncomePerUnit; // Add income of one new unit
+            totalIPS += ownedProperties[propertyId].currentIncomePerUnit;
 
-            // After purchase, re-evaluate all property costs and button states in "Available"
-            // And also update owned properties display if it's the first of its kind
-            loadPropertiesForSale(); // This will re-render available items and update their button states
-            renderOwnedProperties(); // This ensures the newly purchased item shows up in "owned" correctly
-            updateDisplays(); // Update main gold/IPS display
-            // updatePurchaseButtonStates(); // Covered by loadPropertiesForSale
-            // updateUpgradeButtonStates(); // Covered by renderOwnedProperties
+            loadPropertiesForSale();
+            renderOwnedProperties();
+            updateDisplays();
         } else {
             console.log("Not enough gold to purchase " + propData.name);
         }
     }
 
-    // Upgrade Property Logic
     function upgradeProperty(propertyId) {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         const ownedProp = ownedProperties[propertyId];
+        if (!ownedProp || ownedProp.quantity === 0 || ownedProp.level >= propData.maxLevel) return;
 
-        if (!ownedProp || ownedProp.quantity === 0 || ownedProp.level >= propData.maxLevel) {
-            return; // Should not happen if button is correctly disabled
-        }
-        const upgradeCost = ownedProp.currentUpgradeCost; // Cost should be based on current level
-
+        const upgradeCost = ownedProp.currentUpgradeCost;
         if (gold >= upgradeCost) {
             gold -= upgradeCost;
-
-            totalIPS -= ownedProp.currentIncomePerUnit * ownedProp.quantity; // Subtract old total IPS
-
+            totalIPS -= ownedProp.currentIncomePerUnit * ownedProp.quantity;
             ownedProp.level++;
-            ownedProp.currentIncomePerUnit *= propData.upgradeIncomeMultiplier; // No Math.floor
-            ownedProp.currentUpgradeCost = calculateUpgradeCost(propertyId); // Recalculate for next level
+            ownedProp.currentIncomePerUnit *= propData.upgradeIncomeMultiplier;
+            ownedProp.currentUpgradeCost = calculateUpgradeCost(propertyId);
+            totalIPS += ownedProp.currentIncomePerUnit * ownedProp.quantity;
 
-            totalIPS += ownedProp.currentIncomePerUnit * ownedProp.quantity; // Add new total IPS
-
-            renderOwnedProperties(); // Re-render to show new stats and update button states for owned items
-            updateDisplays(); // Update main gold/IPS
-            updatePurchaseButtonStates(); // Gold has changed, so update available property buttons too
+            renderOwnedProperties();
+            updateDisplays();
+            updatePurchaseButtonStates(); // Gold changed, so available property affordability might change
         } else {
             console.log("Not enough gold to upgrade " + propData.name);
         }
     }
 
-    // Update enable/disable state and style of purchase buttons
     function updatePurchaseButtonStates() {
         window.gameProperties.forEach(prop => {
             const button = document.getElementById(`buy-${prop.id}`);
-            const costDisplay = document.getElementById(`cost-${prop.id}`); // Get cost span
-            if (button && costDisplay) { // Ensure both elements exist
+            const costDisplay = document.getElementById(`cost-${prop.id}`);
+            if (button && costDisplay) {
                 const cost = calculatePurchaseCost(prop.id);
                 const isAffordable = gold >= cost;
-
                 button.disabled = !isAffordable;
                 button.classList.toggle('btn-affordable', isAffordable);
-
                 costDisplay.textContent = formatNumber(cost, true);
                 costDisplay.classList.toggle('affordable', isAffordable);
                 costDisplay.classList.toggle('unaffordable', !isAffordable);
@@ -246,27 +243,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Update enable/disable state and style of upgrade buttons
     function updateUpgradeButtonStates() {
         for (const propId in ownedProperties) {
             if (ownedProperties[propId].quantity > 0) {
-                const propData = window.gameProperties.find(p => p.id === propId); // Needed for maxLevel check
+                const propData = window.gameProperties.find(p => p.id === propId);
                 const ownedProp = ownedProperties[propId];
-                const button = document.getElementById(`upgrade-${propId}`);
-                const costDisplay = document.getElementById(`upgrade-cost-${propId}`); // Get cost span
+                const button = document.getElementById(`upgrade-${propId}`); // Query within the whole document
+                const costDisplay = document.getElementById(`upgrade-cost-${propId}`);
 
-                if (button) { // Button exists if not max level
-                    // Check against maxLevel again in case it was just reached
+                if (button) {
                     if (ownedProp.level >= propData.maxLevel) {
                         button.disabled = true;
                         button.classList.remove('btn-affordable');
-                        // Potentially change text or hide button, already handled by render logic
                     } else {
                         const isAffordable = gold >= ownedProp.currentUpgradeCost;
                         button.disabled = !isAffordable;
                         button.classList.toggle('btn-affordable', isAffordable);
-
-                        if (costDisplay) { // Ensure cost display for upgrade exists
+                        if (costDisplay) {
                             costDisplay.textContent = formatNumber(ownedProp.currentUpgradeCost, true);
                             costDisplay.classList.toggle('affordable', isAffordable);
                             costDisplay.classList.toggle('unaffordable', !isAffordable);
@@ -277,49 +270,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Utility to format numbers
-    // Takes an additional 'floorOutputForSuffix' boolean: true to always floor before suffixing (for gold/costs), false to allow decimals (for IPS)
     function formatNumber(num, floorOutputForDisplay) {
         let numToFormat = num;
-
-        // For IPS, we want to see decimals. For Gold/Costs, we typically floor for display unless it's suffixed.
-        if (floorOutputForDisplay && Math.abs(numToFormat) < 1000) { // Only floor if display demands it AND it's not going to be K/M/B
+        if (floorOutputForDisplay && Math.abs(numToFormat) < 1000) {
             numToFormat = Math.floor(numToFormat);
         }
 
-        if (Math.abs(numToFormat) < 1 && !floorOutputForDisplay) { // Show 2 decimal places for IPS < 1
+        if (Math.abs(numToFormat) < 1 && !floorOutputForDisplay) {
             return numToFormat.toFixed(2);
         }
-        if (Math.abs(numToFormat) < 1000) { // For numbers less than 1000
-            // If it's meant to be floored for display OR if it's a whole number already after potential float ops
-            if (floorOutputForDisplay || numToFormat % 1 === 0) {
-                return Math.floor(numToFormat).toString(); // Ensure it's an integer string
-            } else { // Otherwise, show one decimal place (typically for IPS)
-                return numToFormat.toFixed(1);
-            }
+        if (Math.abs(numToFormat) < 1000) {
+            return (floorOutputForDisplay || numToFormat % 1 === 0) ?
+                   Math.floor(numToFormat).toString() : numToFormat.toFixed(1);
         }
 
-        // Logic for K, M, B, etc.
-        // For these large numbers, flooring the base before dividing for suffix is acceptable for costs/gold.
-        // For IPS, if it's large, the toFixed(1) on the suffixed number is usually good.
         let baseNumForSuffix = floorOutputForDisplay ? Math.floor(num) : num;
-
-        const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"]; // Extended suffixes
-        const i = Math.floor(Math.log10(Math.abs(baseNumForSuffix)) / 3);
-
-        if (i === 0) { // Fallback, should have been caught by < 1000
-             return floorOutputForDisplay ? Math.floor(baseNumForSuffix).toString() : baseNumForSuffix.toFixed(1);
+        const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+        const i = Math.max(0, Math.min(suffixes.length - 1, Math.floor(Math.log10(Math.abs(baseNumForSuffix)) / 3)));
+        
+        if (i === 0) { // Fallback for numbers like 999.999 that don't quite hit 1K for suffix
+            return (floorOutputForDisplay || baseNumForSuffix % 1 === 0) ? Math.floor(baseNumForSuffix).toString() : baseNumForSuffix.toFixed(1);
         }
         
         let shortNum = (baseNumForSuffix / Math.pow(1000, i));
-        // For K/M/B etc display, always use one decimal place unless it's effectively .0 after rounding
-        // e.g. 1.0M should be 1M, 1.2M should be 1.2M
         if (shortNum.toFixed(1).endsWith('.0')) {
             return shortNum.toFixed(0) + suffixes[i];
         }
         return shortNum.toFixed(1) + suffixes[i];
     }
 
-    // Start the game
     initGame();
 });

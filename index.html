@@ -26,7 +26,8 @@
             <button class="tab-button active" data-tab="availablePropertiesTabContent">Available Properties</button>
             <button class="tab-button" data-tab="ownedPropertiesTabContent">Your Holdings</button>
             <button class="tab-button" data-tab="achievementsTabContent">Achievements</button>
-            </div>
+            <button class="tab-button" data-tab="ascendancyTabContent">Ascendancy</button>
+        </div>
 
         <div id="tabContentContainer">
             <div id="availablePropertiesTabContent" class="tab-panel active">
@@ -52,6 +53,33 @@
                         </div>
                 </section>
             </div>
+
+            <div id="ascendancyTabContent" class="tab-panel">
+                <section id="ascendancy-section-content">
+                    <h2>Ascend to New Heights</h2>
+                    <div id="ascendReadyNotification" style="display:none; padding: 10px; background-color: var(--primary-accent-color); color: var(--text-dark-contrast); border-radius: 5px; margin-bottom:15px; text-align:center;">
+                        You are ready to Ascend! Powerful upgrades await!
+                    </div>
+                    <div class="ascendancy-status">
+                        <p>Progress this Run: <span id="currentGoldForAscendDisplay">0</span> / <span id="goldRequiredForAscendDisplay">1.00Q</span> Gold</p>
+                        <p>Potential Realm Shards on Ascend: <span id="potentialShardsDisplay">0</span> RS</p>
+                        <hr>
+                        <p>Total Realm Shards: <span id="totalRealmShardsDisplay">0</span> RS</p>
+                        <p>Times Ascended: <span id="timesAscendedDisplay">0</span></p>
+                    </div>
+                    <div id="ascendancyInfo" class="ascend-info-text">
+                        <p>Reach the specified Gold earned in this run to unlock the ability to Ascend. Ascending resets your current run for powerful permanent upgrades.</p>
+                    </div>
+                    <button id="ascendButton" class="ascend-action-button" disabled>Reach Ascension Goal</button>
+
+                    <hr class="ascend-divider">
+
+                    <h3>Prestige Upgrades</h3>
+                    <div id="prestigeUpgradeShop" class="prestige-shop-grid">
+                        <p>Your available Realm Shards: <span id="shopRealmShardsDisplay">0</span> RS</p> <p style="color: var(--text-light-tertiary);">(Prestige upgrade shop implementation coming soon!)</p>
+                    </div>
+                </section>
+            </div>
         </div>
 
         <footer>
@@ -62,6 +90,7 @@
     <div id="notificationArea"></div>
 
     <script src="js/properties.js"></script>
-    <script src="js/achievements.js"></script> <script src="js/main.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

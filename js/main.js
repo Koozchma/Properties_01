@@ -12,15 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.prestigeUpgrades = {}; // Global for access by prestige_upgrades.js descriptions
 
     // Constants
-    const SAVE_KEY_PREFIX = 'realmTycoon_v1.1'; // Added a version to key in case of structure changes
+    const SAVE_KEY_PREFIX = 'realmTycoon_v1.1_'; // Version your save key
     const GAME_STATE_KEY = SAVE_KEY_PREFIX + 'gameState';
-    const BASE_STARTING_GOLD = 10;
+    const BASE_STARTING_GOLD = 10; // Minimum gold to start any run
     const ASCEND_GOLD_REQUIREMENT_FIRST = 1e15; // 1 Quadrillion
-    const ASCEND_GOLD_REQUIREMENT_SUBSEQUENT_FACTOR = 5;
-    const REALM_SHARD_CALC_BASE_GOLD = 1e12; // Gold threshold for shard formula to kick in meaningfully
-    const REALM_SHARD_CALC_POWER = 1.8;
-    const REALM_SHARD_CALC_MULTIPLIER = 3;
-    const BASE_OFFLINE_SECONDS_CAP = 3 * 60 * 60; // 2 hours
+    const ASCEND_GOLD_REQUIREMENT_SUBSEQUENT_FACTOR = 5; // Requirement multiplier for next ascension
+    const REALM_SHARD_CALC_BASE_GOLD = 1e12; // Gold threshold for shard formula
+    const REALM_SHARD_CALC_POWER = 1.8; // Power for shard calculation scaling
+    const REALM_SHARD_CALC_MULTIPLIER = 3; // Multiplier for shard calculation
+    const BASE_OFFLINE_SECONDS_CAP = 2 * 60 * 60; // 2 hours base offline time
 
     // DOM Elements
     const goldDisplay = document.getElementById('goldDisplay');
@@ -51,61 +51,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return window.prestigeUpgrades[upgradeId] || 0;
     }
 
-    function getGlobalIncomeBonus() {
-        const level = getPrestigeUpgradeLevel('cosmicBlessing');
-        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === 'cosmicBlessing');
-        return upgradeData ? upgradeData.effectValueFunction(level) : 0;
+    function getTotalEffectFromPrestige(upgradeId) {
+        const level = getPrestigeUpgradeLevel(upgradeId);
+        if (level === 0) return 0;
+        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === upgradeId);
+        if (!upgradeData || typeof upgradeData.effectPerLevel === 'undefined') return 0;
+        return level * upgradeData.effectPerLevel;
     }
 
-    function getGlobalCostReduction() {
-        const level = getPrestigeUpgradeLevel('efficientRealms');
-        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === 'efficientRealms');
-        return upgradeData ? upgradeData.effectValueFunction(level) : 0;
-    }
-
-    function getStartingGoldBonus() {
-        const level = getPrestigeUpgradeLevel('startingGoldBoost');
-        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === 'startingGoldBoost');
-        return upgradeData ? upgradeData.effectValueFunction(level) : 0;
-    }
-
-    function getRealmShardGainBonus() {
-        const level = getPrestigeUpgradeLevel('shardHoarder');
-        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === 'shardHoarder');
-        return upgradeData ? upgradeData.effectValueFunction(level) : 0;
-    }
-
-    function getOfflineTimeCapBonusSeconds() {
-        const level = getPrestigeUpgradeLevel('offlineTimeCapBoost');
-        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === 'offlineTimeCapBoost');
-        return upgradeData ? upgradeData.effectValueFunction(level) : 0;
-    }
-
-    function getOfflineMultiplierBonus() {
-        const level = getPrestigeUpgradeLevel('offlineMultiplierBoost');
-        const upgradeData = window.prestigeUpgradesList && window.prestigeUpgradesList.find(upg => upg.id === 'offlineMultiplierBoost');
-        return upgradeData ? upgradeData.effectValueFunction(level) : 0;
-    }
+    function getGlobalIncomeBonus() { return getTotalEffectFromPrestige('cosmicBlessing'); }
+    function getGlobalCostReduction() { return getTotalEffectFromPrestige('efficientRealms'); }
+    function getStartingGoldBonus() { return getTotalEffectFromPrestige('startingGoldBoost'); }
+    function getRealmShardGainBonus() { return getTotalEffectFromPrestige('shardHoarder'); }
+    function getOfflineTimeCapBonusSeconds() { return getTotalEffectFromPrestige('offlineTimeCapBoost'); }
+    function getOfflineMultiplierBonus() { return getTotalEffectFromPrestige('offlineMultiplierBoost'); }
+    function isAscendedFeatureUnlocked(featureId) { return getPrestigeUpgradeLevel(featureId) > 0; }
 
 
     // --- CORE GAME FUNCTIONS ---
     function saveGame() {
         const gameState = {
-            gold: gold,
-            ownedProperties: ownedProperties,
+            gold: gold, ownedProperties: ownedProperties,
             achievements: window.achievementsList ? window.achievementsList.map(a => ({ id: a.id, unlocked: a.unlocked })) : [],
-            lastSaveTimestamp: Date.now(),
-            totalGoldEarnedThisRun: totalGoldEarnedThisRun,
-            timesAscended: timesAscended,
-            realmShards: realmShards,
-            prestigeUpgrades: window.prestigeUpgrades
+            lastSaveTimestamp: Date.now(), totalGoldEarnedThisRun: totalGoldEarnedThisRun,
+            timesAscended: timesAscended, realmShards: realmShards, prestigeUpgrades: window.prestigeUpgrades
         };
-        try {
-            localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState));
-        } catch (e) {
-            console.error("Error saving game:", e);
-            showNotification("Error: Could not save game! Storage might be full.", true);
-        }
+        try { localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState)); }
+        catch (e) { console.error("Error saving game:", e); showNotification("Error: Could not save game! Storage might be full.", true); }
     }
 
     function loadGame() {
@@ -124,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 currentIncomePerUnit: parseFloat(savedProp.currentIncomePerUnit) || 0,
                                 currentUpgradeCost: parseFloat(savedProp.currentUpgradeCost) || 0
                             };
-                            const propData = window.gameProperties.find(p => p.id === propId);
+                            const propData = window.gameProperties && window.gameProperties.find(p => p.id === propId);
                             if (propData) {
                                 if (ownedProperties[propId].level === 0 && ownedProperties[propId].currentIncomePerUnit === 0 && propData.baseIncome > 0)
                                     ownedProperties[propId].currentIncomePerUnit = propData.baseIncome;
@@ -152,7 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error loading game:", e); showNotification("Error loading save. Starting fresh.", true);
             localStorage.removeItem(GAME_STATE_KEY);
         }
-        gold = BASE_STARTING_GOLD + getStartingGoldBonus(); // Apply bonus even on fresh start if somehow loaded prestige
+        // Defaults for a truly new game or failed load
+        gold = BASE_STARTING_GOLD + getStartingGoldBonus();
         totalIPS = 0; ownedProperties = {}; totalGoldEarnedThisRun = 0; timesAscended = 0; realmShards = 0; window.prestigeUpgrades = {};
         if(window.achievementsList) window.achievementsList.forEach(ach => ach.unlocked = false);
         recalculateTotalIPS();
@@ -169,54 +142,41 @@ document.addEventListener('DOMContentLoaded', () => {
             const maxOfflineSeconds = BASE_OFFLINE_SECONDS_CAP + getOfflineTimeCapBonusSeconds();
             const offlineSecondsToCalculate = Math.min(timeDiffSeconds, maxOfflineSeconds);
             const offlineMultiplier = 1 + getOfflineMultiplierBonus();
-            if (totalIPS > 0 && offlineSecondsToCalculate > 10) {
+            if (totalIPS > 0 && offlineSecondsToCalculate > 10) { // totalIPS is already prestige-affected
                 const offlineEarnings = totalIPS * offlineSecondsToCalculate * offlineMultiplier;
                 gold += offlineEarnings;
                 totalGoldEarnedThisRun += offlineEarnings;
                 const welcomeMessage = document.createElement('div');
                 welcomeMessage.className = 'offline-progress-popup';
                 welcomeMessage.innerHTML = `
-                    <h3>Welcome Back, Tycoon!</h3>
-                    <p>While you were away for ${formatTime(timeDiffSeconds)},</p>
-                    <p>you earned <span class="highlight">${formatNumber(offlineEarnings, true)}</span> Gold!</p>
+                    <h3>Welcome Back!</h3>
+                    <p>Away for ${formatTime(timeDiffSeconds)}. Earned <span class="highlight">${formatNumber(offlineEarnings, true)}</span> Gold!</p>
                     <p>(Calculated for ${formatTime(offlineSecondsToCalculate)} at ${formatNumber(totalIPS * offlineMultiplier, false)} effective IPS).</p>
-                    <button id="closeOfflinePopup">Awesome!</button>
-                `;
+                    <button id="closeOfflinePopup">Awesome!</button>`;
                 document.body.appendChild(welcomeMessage);
                 document.getElementById('closeOfflinePopup').addEventListener('click', () => welcomeMessage.remove());
             }
         }
-        if (timesAscended === 0 && getStartingGoldBonus() === 0 && gold < BASE_STARTING_GOLD) {
-            gold = BASE_STARTING_GOLD;
-        } else if (timesAscended > 0 && gold < (BASE_STARTING_GOLD + getStartingGoldBonus()) ) {
-             // Ensure starting gold bonus is applied if loading a just-ascended state with 0 gold
-            if (gold < getStartingGoldBonus() + BASE_STARTING_GOLD) gold = getStartingGoldBonus() + BASE_STARTING_GOLD;
+        // Ensure starting gold is correct, especially for first run or after a load that might have 0 gold post-ascend
+        const currentCalculatedStartingGold = BASE_STARTING_GOLD + getStartingGoldBonus();
+        if (gold < currentCalculatedStartingGold && totalGoldEarnedThisRun < 1000 && Object.keys(ownedProperties).length === 0) {
+            // Apply if gold is less than expected start and it looks like a fresh run state
+            gold = currentCalculatedStartingGold;
         }
 
 
-        loadPropertiesForSale();
-        renderOwnedProperties();
-        renderAchievements();
-        renderPrestigeShop();
-        updateDisplays();
-        checkAscendEligibility();
+        loadPropertiesForSale(); renderOwnedProperties(); renderAchievements(); renderPrestigeShop();
+        updateDisplays(); checkAscendEligibility();
         if (ascendButton) ascendButton.addEventListener('click', performAscension);
-        setInterval(gameLoop, 1000);
-        setInterval(saveGame, 30000);
+        setInterval(gameLoop, 1000); setInterval(saveGame, 30000);
         window.addEventListener('beforeunload', saveGame);
     }
 
     function gameLoop() {
         let incomeThisTick = totalIPS;
-        if (incomeThisTick > 0) {
-            gold += incomeThisTick;
-            totalGoldEarnedThisRun += incomeThisTick;
-        }
-        updateDisplays();
-        updatePurchaseButtonStates();
-        updateUpgradeButtonStates();
-        checkAllAchievements();
-        checkAscendEligibility();
+        if (incomeThisTick > 0) { gold += incomeThisTick; totalGoldEarnedThisRun += incomeThisTick; }
+        updateDisplays(); updatePurchaseButtonStates(); updateUpgradeButtonStates();
+        checkAllAchievements(); checkAscendEligibility();
     }
 
     function updateDisplays() {
@@ -253,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hours > 0) result += `${hours}h `;
         if (minutes > 0) result += `${minutes}m `;
         if (seconds >= 0 && result === "") result += `${seconds}s`;
-        else if (seconds > 0 || (hours === 0 && minutes === 0 && seconds === 0)) result += `${seconds}s`; // Ensure "0s" is shown if time is 0
+        else if (seconds > 0 || (hours === 0 && minutes === 0 && seconds === 0)) result += `${seconds}s`;
         return result.trim() || "0s";
     }
 
@@ -263,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function calculateEffectiveCost(baseCost) {
-        return baseCost * Math.max(0.01, (1 - getGlobalCostReduction()));
+        return baseCost * Math.max(0.01, (1 - getGlobalCostReduction())); // Cost reduction can't make items free or negative cost
     }
 
     function recalculateTotalIPS() {
@@ -292,33 +252,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         if (!propData) return 0;
         let currentOwned = ownedProperties[propertyId] ? ownedProperties[propertyId].quantity : 0;
-        let tempGold = gold;
-        let quantityCanBuy = 0;
-        for (let i = 0; i < 2500; i++) {
+        let tempGold = gold; let quantityCanBuy = 0;
+        for (let i = 0; i < 2500; i++) { // Safety break for performance
             const nextUnitBaseCost = Math.floor(propData.baseCost * Math.pow(propData.costMultiplier, currentOwned + quantityCanBuy));
             const costForNext = Math.floor(calculateEffectiveCost(nextUnitBaseCost));
-            if (tempGold >= costForNext && costForNext > 0) { // Ensure costForNext is positive to prevent infinite loop on free items
-                tempGold -= costForNext;
-                quantityCanBuy++;
-            } else {
-                break;
-            }
+            if (tempGold >= costForNext && costForNext > 0) { tempGold -= costForNext; quantityCanBuy++; }
+            else break;
         }
         return quantityCanBuy;
     }
 
     function loadPropertiesForSale() {
-        if (!propertiesContainer) return;
+        if (!propertiesContainer || !window.gameProperties) return;
         propertiesContainer.innerHTML = '';
-        if (!window.gameProperties) { console.error("gameProperties not loaded!"); return; }
+        const celestialForgeUnlocked = isAscendedFeatureUnlocked('unlockCelestialForge');
+
         window.gameProperties.forEach(prop => {
+            if (prop.isAscended && prop.id === 'celestialForge' && !celestialForgeUnlocked) {
+                return; // Skip celestial forge if not unlocked
+            }
+             // Add other ascended property checks here if needed
+
             const cost1 = calculateBulkPurchaseCost(prop.id, 1);
             const isAffordable1 = gold >= cost1;
             const card = document.createElement('div');
             card.classList.add('property-card', `tier-${prop.tier}`);
+            if (prop.isAscended) card.classList.add('ascended-property');
+
             const contentDiv = document.createElement('div');
             contentDiv.innerHTML = `
-                <span class="tier-indicator tier-${prop.tier}">Tier ${prop.tier}</span>
+                <span class="tier-indicator tier-${prop.tier}">${prop.isAscended ? 'ASCENDED TIER' : 'Tier ' + prop.tier}</span>
                 <h3>${prop.name}</h3>
                 <p class="description">${prop.description}</p>
                 <p>Cost (x1): <span id="cost-${prop.id}" class="property-cost ${isAffordable1 ? 'affordable' : 'unaffordable'}">${formatNumber(cost1, true)}</span> Gold</p>
@@ -330,10 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const quantities = [1, 10, 25, 'MAX'];
             quantities.forEach(qty => {
                 const btn = document.createElement('button');
-                btn.dataset.propertyId = prop.id;
-                btn.dataset.quantity = qty;
+                btn.dataset.propertyId = prop.id; btn.dataset.quantity = qty;
                 btn.classList.add('buy-multiple-button');
-                if (qty === 1) btn.classList.add('purchase-button');
+                if (qty === 1) btn.classList.add('purchase-button'); // For specific styling if purchase-button has unique base style
                 btn.textContent = `Buy ${qty}`;
                 btn.addEventListener('click', () => purchaseProperty(prop.id, qty));
                 buyButtonsDiv.appendChild(btn);
@@ -346,8 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderOwnedProperties() {
         if (!ownedPropertiesContainer) return;
-        ownedPropertiesContainer.innerHTML = '';
-        let hasOwnedAndDisplayableProperties = false;
+        ownedPropertiesContainer.innerHTML = ''; let hasOwnedAndDisplayableProperties = false;
         for (const propId in ownedProperties) {
             if (ownedProperties[propId] && ownedProperties[propId].quantity > 0) {
                 hasOwnedAndDisplayableProperties = true;
@@ -372,40 +333,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const card = document.createElement('div');
                 card.classList.add('property-card', 'owned-property', `tier-${propData.tier}`);
-                card.innerHTML = `
-                    <div>
-                        <span class="tier-indicator tier-${propData.tier}">Tier ${propData.tier}</span>
+                if (propData.isAscended) card.classList.add('ascended-property');
+                card.innerHTML = `<div>
+                        <span class="tier-indicator tier-${propData.tier}">${propData.isAscended ? 'ASCENDED TIER' : 'Tier ' + propData.tier}</span>
                         <h3>${propData.name} (x${ownedProp.quantity})</h3>
                         <div class="owned-property-details">
                             <p>Level: <span id="level-${propId}">${ownedProp.level}</span> / ${propData.maxLevel}</p>
-                            <div class="level-progress-container">
-                                <div class="level-progress-bar" style="width: ${progressPercent}%;">
-                                    ${ownedProp.level > 0 && progressPercent > 10 ? Math.floor(progressPercent)+'%' : ''}
-                                </div>
-                            </div>
+                            <div class="level-progress-container"><div class="level-progress-bar" style="width: ${progressPercent}%;">${ownedProp.level > 0 && progressPercent > 10 ? Math.floor(progressPercent)+'%' : ''}</div></div>
                             <p>Current Income/Unit: ${formatNumber(applyPrestigeIncomeBonus(ownedProp.currentIncomePerUnit), false)} IPS</p>
                             <p>Total Income from Type: ${formatNumber(applyPrestigeIncomeBonus(ownedProp.currentIncomePerUnit * ownedProp.quantity), false)} IPS</p>
                         </div>
-                        ${upgradeHtmlSection}
-                    </div>
-                `;
+                        ${upgradeHtmlSection}</div>`;
                 ownedPropertiesContainer.appendChild(card);
                 if (ownedProp.level < propData.maxLevel) {
                     const upgradeButton = card.querySelector(`#upgrade-${propId}`);
-                    if (upgradeButton) {
-                        upgradeButton.disabled = !isUpgradeAffordable;
-                        upgradeButton.addEventListener('click', () => upgradeProperty(propId));
-                    }
+                    if (upgradeButton) { upgradeButton.disabled = !isUpgradeAffordable; upgradeButton.addEventListener('click', () => upgradeProperty(propId)); }
                 }
             }
         }
         const ownedSection = document.getElementById('owned-properties-section-content');
-        if (ownedSection) {
-            const ownedSectionTitle = ownedSection.querySelector('h2');
-            if (ownedSectionTitle) ownedSectionTitle.style.display = hasOwnedAndDisplayableProperties ? 'block' : 'none';
-        }
+        if (ownedSection) { const title = ownedSection.querySelector('h2'); if(title) title.style.display = hasOwnedAndDisplayableProperties ? 'block' : 'none'; }
         if (!hasOwnedAndDisplayableProperties && ownedPropertiesContainer.innerHTML === '') {
-            ownedPropertiesContainer.innerHTML = '<p style="text-align:center; color: var(--text-light-tertiary);">You do not own any properties yet. Purchase some from the "Available Properties" tab!</p>';
+            ownedPropertiesContainer.innerHTML = '<p style="text-align:center; color: var(--text-light-tertiary);">No properties owned yet. Purchase some!</p>';
         }
         updateUpgradeButtonStates();
     }
@@ -414,18 +363,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const propData = window.gameProperties.find(p => p.id === propertyId);
         if (!propData) return;
         let actualQuantityToBuy = typeof quantityInput === 'string' && quantityInput.toUpperCase() === 'MAX' ? calculateMaxAffordableQuantity(propertyId) : parseInt(quantityInput) || 1;
-        if (actualQuantityToBuy === 0) {
-            updatePurchaseButtonStates(); return;
-        }
+        if (actualQuantityToBuy === 0) { updatePurchaseButtonStates(); return; }
         const cost = calculateBulkPurchaseCost(propertyId, actualQuantityToBuy);
         if (gold >= cost) {
             gold -= cost;
             if (!ownedProperties[propertyId]) {
-                ownedProperties[propertyId] = {
-                    quantity: 0, level: 0,
-                    currentIncomePerUnit: propData.baseIncome,
-                    currentUpgradeCost: propData.upgradeCost
-                };
+                ownedProperties[propertyId] = { quantity: 0, level: 0, currentIncomePerUnit: propData.baseIncome, currentUpgradeCost: propData.upgradeCost };
             }
             ownedProperties[propertyId].quantity += actualQuantityToBuy;
             recalculateTotalIPS();
@@ -451,6 +394,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePurchaseButtonStates() {
         if (!window.gameProperties) return;
         window.gameProperties.forEach(prop => {
+            if (prop.isAscended && prop.id === 'celestialForge' && !isAscendedFeatureUnlocked('unlockCelestialForge')) {
+                return; // Skip if not unlocked
+            }
             const cost1Display = document.getElementById(`cost-${prop.id}`);
             if (cost1Display) {
                 const cost1 = calculateBulkPurchaseCost(prop.id, 1);
@@ -460,19 +406,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const buyMultipleButtons = document.querySelectorAll(`.buy-multiple-button[data-property-id="${prop.id}"]`);
             buyMultipleButtons.forEach(button => {
-                const qty = button.dataset.quantity;
-                let isAffordable; let displayQtyText = qty;
+                const qty = button.dataset.quantity; let isAffordable; let displayQtyText = qty;
                 if (qty.toUpperCase() === 'MAX') {
                     const maxQty = calculateMaxAffordableQuantity(prop.id);
                     displayQtyText = `Max (${maxQty})`; isAffordable = maxQty > 0;
                 } else {
-                    const numQty = parseInt(qty);
-                    const costForQty = calculateBulkPurchaseCost(prop.id, numQty);
-                    isAffordable = gold >= costForQty;
-                    if (numQty > 1) button.title = `Cost: ${formatNumber(costForQty, true)}`;
+                    const numQty = parseInt(qty); const costForQty = calculateBulkPurchaseCost(prop.id, numQty);
+                    isAffordable = gold >= costForQty; if (numQty > 1) button.title = `Cost: ${formatNumber(costForQty, true)}`;
                 }
-                button.textContent = `Buy ${displayQtyText}`;
-                button.disabled = !isAffordable;
+                button.textContent = `Buy ${displayQtyText}`; button.disabled = !isAffordable;
                 button.classList.toggle('btn-affordable', isAffordable);
             });
         });
@@ -481,23 +423,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUpgradeButtonStates() {
         for (const propId in ownedProperties) {
             if (ownedProperties[propId] && ownedProperties[propId].quantity > 0) {
-                const propData = window.gameProperties.find(p => p.id === propId);
-                if (!propData) continue;
-                const ownedProp = ownedProperties[propId];
-                const button = document.getElementById(`upgrade-${propId}`);
+                const propData = window.gameProperties.find(p => p.id === propId); if (!propData) continue;
+                const ownedProp = ownedProperties[propId]; const button = document.getElementById(`upgrade-${propId}`);
                 const costDisplay = document.getElementById(`upgrade-cost-${propId}`);
                 if (button) {
-                    if (ownedProp.level >= propData.maxLevel) {
-                        button.disabled = true; button.classList.remove('btn-affordable');
-                    } else {
+                    if (ownedProp.level >= propData.maxLevel) { button.disabled = true; button.classList.remove('btn-affordable'); }
+                    else {
                         const effectiveUpgradeCost = Math.floor(calculateEffectiveCost(ownedProp.currentUpgradeCost));
                         const isAffordable = gold >= effectiveUpgradeCost;
-                        button.disabled = !isAffordable;
-                        button.classList.toggle('btn-affordable', isAffordable);
+                        button.disabled = !isAffordable; button.classList.toggle('btn-affordable', isAffordable);
                         if (costDisplay) {
                             costDisplay.textContent = formatNumber(effectiveUpgradeCost, true);
-                            costDisplay.classList.toggle('affordable', isAffordable);
-                            costDisplay.classList.toggle('unaffordable', !isAffordable);
+                            costDisplay.classList.toggle('affordable', isAffordable); costDisplay.classList.toggle('unaffordable', !isAffordable);
                         }
                     }
                 }
@@ -522,14 +459,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function showNotification(message, isError = false) {
         const notificationArea = document.getElementById('notificationArea') || createNotificationArea();
         const notification = document.createElement('div');
-        notification.className = 'achievement-notification';
-        if(isError) notification.classList.add('error-notification');
-        notification.textContent = message;
-        notificationArea.prepend(notification);
-        setTimeout(() => {
-            notification.classList.add('fade-out');
-            setTimeout(() => notification.remove(), 500);
-        }, 4500);
+        notification.className = 'achievement-notification'; if(isError) notification.classList.add('error-notification');
+        notification.textContent = message; notificationArea.prepend(notification);
+        setTimeout(() => { notification.classList.add('fade-out'); setTimeout(() => notification.remove(), 500); }, 4500);
     }
     function createNotificationArea() {
         let area = document.getElementById('notificationArea');
@@ -537,56 +469,46 @@ document.addEventListener('DOMContentLoaded', () => {
         return area;
     }
     function renderAchievements() {
-        if (!achievementsContainer || !window.achievementsList) return;
-        achievementsContainer.innerHTML = '';
+        if (!achievementsContainer || !window.achievementsList) return; achievementsContainer.innerHTML = '';
         window.achievementsList.forEach(ach => {
             const achDiv = document.createElement('div');
             achDiv.className = 'achievement-card'; if (ach.unlocked) achDiv.classList.add('unlocked');
-            achDiv.innerHTML = `
-                <span class="achievement-icon">${ach.icon}</span>
-                <div class="achievement-info"><h4>${ach.name}</h4><p>${ach.description}</p></div>
-                <span class="achievement-status">${ach.unlocked ? 'Unlocked!' : 'Locked'}</span>`;
+            achDiv.innerHTML = `<span class="achievement-icon">${ach.icon}</span><div class="achievement-info"><h4>${ach.name}</h4><p>${ach.description}</p></div><span class="achievement-status">${ach.unlocked ? 'Unlocked!' : 'Locked'}</span>`;
             achievementsContainer.appendChild(achDiv);
         });
     }
 
     // --- ASCENDANCY FUNCTIONS ---
     function getAscendGoldRequirement() {
-        return timesAscended === 0 ? ASCEND_GOLD_REQUIREMENT_FIRST :
-               ASCEND_GOLD_REQUIREMENT_FIRST * Math.pow(ASCEND_GOLD_REQUIREMENT_SUBSEQUENT_FACTOR, timesAscended);
+        return timesAscended === 0 ? ASCEND_GOLD_REQUIREMENT_FIRST : ASCEND_GOLD_REQUIREMENT_FIRST * Math.pow(ASCEND_GOLD_REQUIREMENT_SUBSEQUENT_FACTOR, timesAscended);
     }
-
     function calculatePotentialRealmShards() {
         const requirement = getAscendGoldRequirement();
         if (totalGoldEarnedThisRun < requirement) return 0;
-        if (totalGoldEarnedThisRun < REALM_SHARD_CALC_BASE_GOLD && totalGoldEarnedThisRun >= requirement) return Math.max(1, Math.floor(1 * (1 + getRealmShardGainBonus())));
-        if (totalGoldEarnedThisRun < REALM_SHARD_CALC_BASE_GOLD) return 0;
-
-        const baseForCalc = totalGoldEarnedThisRun / REALM_SHARD_CALC_BASE_GOLD;
-        let shards = Math.floor(Math.pow(Math.log10(baseForCalc) + 1, REALM_SHARD_CALC_POWER) * REALM_SHARD_CALC_MULTIPLIER);
+        let shards;
+        if (totalGoldEarnedThisRun < REALM_SHARD_CALC_BASE_GOLD) {
+            shards = 1;
+        } else {
+            const baseForCalc = totalGoldEarnedThisRun / REALM_SHARD_CALC_BASE_GOLD;
+            shards = Math.floor(Math.pow(Math.log10(baseForCalc) + 1, REALM_SHARD_CALC_POWER) * REALM_SHARD_CALC_MULTIPLIER);
+        }
         shards *= (1 + getRealmShardGainBonus());
         return Math.max(1, Math.floor(shards));
     }
-
     function checkAscendEligibility() {
-        const requirement = getAscendGoldRequirement();
-        const canAscend = totalGoldEarnedThisRun >= requirement;
+        const requirement = getAscendGoldRequirement(); const canAscend = totalGoldEarnedThisRun >= requirement;
         if (ascendReadyNotification) ascendReadyNotification.style.display = canAscend ? 'block' : 'none';
         if (ascendButton) {
-            ascendButton.disabled = !canAscend;
-            const potentialShards = calculatePotentialRealmShards();
+            ascendButton.disabled = !canAscend; const potentialShards = calculatePotentialRealmShards();
             if (canAscend) {
-                ascendButton.classList.add('btn-affordable');
-                ascendButton.textContent = `ASCEND! (+${formatNumber(potentialShards, true)} RS)`;
+                ascendButton.classList.add('btn-affordable'); ascendButton.textContent = `ASCEND! (+${formatNumber(potentialShards, true)} RS)`;
                 if(ascendancyInfoDiv) ascendancyInfoDiv.innerHTML = `<p>You are ready to Ascend! Reset current run for Realm Shards and powerful permanent upgrades.</p>`;
             } else {
-                ascendButton.classList.remove('btn-affordable');
-                ascendButton.textContent = 'Reach Ascension Goal';
+                ascendButton.classList.remove('btn-affordable'); ascendButton.textContent = 'Reach Ascension Goal';
                 if(ascendancyInfoDiv) ascendancyInfoDiv.innerHTML = `<p>Reach ${formatNumber(requirement, true)} total Gold earned in this run to Ascend.</p>`;
             }
         }
     }
-
     function performAscension() {
         const requirement = getAscendGoldRequirement();
         if (totalGoldEarnedThisRun < requirement) { showNotification("Not yet ready to Ascend!", true); return; }
@@ -608,7 +530,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!window.prestigeUpgradesList) { prestigeUpgradeShopContainer.innerHTML = '<p>Prestige upgrades definition file not loaded.</p>'; return; }
         prestigeUpgradeShopContainer.innerHTML = '';
         const shopHeader = document.createElement('p');
-        shopHeader.innerHTML = `Your available Realm Shards: <span id="shopRealmShardsDisplayCurrent" style="color: var(--primary-accent-color); font-weight: bold;">${formatNumber(realmShards, true)}</span> RS`; // Changed ID slightly
+        shopHeader.id = 'shopRealmShardsDisplay'; // Ensure this matches HTML if using getElementById
+        shopHeader.innerHTML = `Your available Realm Shards: <span style="color: var(--primary-accent-color); font-weight: bold;">${formatNumber(realmShards, true)}</span> RS`;
         prestigeUpgradeShopContainer.appendChild(shopHeader);
 
         window.prestigeUpgradesList.forEach(upgradeData => {
@@ -616,11 +539,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const cost = upgradeData.costFormula(currentLevel);
             const canAfford = realmShards >= cost;
             const isMaxLevel = upgradeData.maxLevel !== null && currentLevel >= upgradeData.maxLevel;
-            // Description function now directly accesses window.prestigeUpgrades via getPrestigeUpgradeLevel
-            // or by using currentLevel and upgradeData.effectPerLevel to construct current bonus text.
-            // The prestige_upgrades.js file's description functions were updated to be self-contained.
-            let description = upgradeData.descriptionFunction(currentLevel);
-
+            // The descriptionFunction in prestige_upgrades.js now uses window.prestigeUpgrades (global)
+            // or needs to be called with currentLevel for dynamic text.
+            let description = upgradeData.descriptionFunction(currentLevel); // Call with currentLevel
 
             const card = document.createElement('div');
             card.className = 'prestige-upgrade-card';
@@ -638,9 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             prestigeUpgradeShopContainer.appendChild(card);
         });
-         // Update the shop specific shard display
-        const shopShardsElem = document.getElementById('shopRealmShardsDisplayCurrent');
-        if (shopShardsElem) shopShardsElem.textContent = formatNumber(realmShards, true);
     }
 
     function buyPrestigeUpgrade(upgradeId) {
@@ -656,12 +574,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.prestigeUpgrades[upgradeId] = currentLevel + 1;
             showNotification(`${upgradeData.name} upgraded to Level ${window.prestigeUpgrades[upgradeId]}!`);
             saveGame(); recalculateTotalIPS(); updateDisplays(); renderPrestigeShop();
-            // If cost reduction was bought, property costs displayed need to update
-            if (upgradeData.type === 'cost_reduction_all') {
+            if (upgradeData.type === 'cost_reduction_all' || upgradeData.type === 'income_multiplier_all' || upgradeData.type === 'unlock_feature') {
                 loadPropertiesForSale(); renderOwnedProperties();
             }
-            // If starting gold was bought, it applies next ascension.
-            // If offline boosts were bought, they apply next time offline progress is calculated.
         } else {
             showNotification("Not enough Realm Shards!", true);
         }
@@ -670,20 +585,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- UTILITY FUNCTIONS ---
     function formatNumber(num, floorOutputForDisplay) {
         let numToFormat = num;
-        if (floorOutputForDisplay && Math.abs(numToFormat) < 1000 && !Number.isInteger(numToFormat)) numToFormat = Math.floor(numToFormat);
-        else if (floorOutputForDisplay && Number.isInteger(numToFormat)) numToFormat = numToFormat; // No change if already integer
-        else if (!floorOutputForDisplay && Math.abs(numToFormat) < 1000 && numToFormat % 1 !== 0) numToFormat = parseFloat(numToFormat.toFixed(1)); // Show 1 decimal for non-integers < 1000 if not flooring
-        else if (Math.abs(numToFormat) < 1000) numToFormat = Math.floor(numToFormat); // Default floor if integer or no decimal display
+        if (typeof numToFormat !== 'number' || isNaN(numToFormat)) numToFormat = 0; // Handle NaN/undefined safely
 
-        if (Math.abs(numToFormat) < 1 && !floorOutputForDisplay) return parseFloat(num.toFixed(2)).toString(); // Use original num for precision with toFixed
+        if (floorOutputForDisplay && Math.abs(numToFormat) < 1000) {
+            numToFormat = Math.floor(numToFormat);
+        } else if (!floorOutputForDisplay && Math.abs(numToFormat) < 1 && numToFormat !== 0) {
+            return parseFloat(num.toFixed(2)).toString();
+        } else if (Math.abs(numToFormat) < 1000 && numToFormat % 1 !== 0 && !floorOutputForDisplay) {
+            numToFormat = parseFloat(numToFormat.toFixed(1));
+        } else if (Math.abs(numToFormat) < 1000) {
+             numToFormat = Math.floor(numToFormat);
+        }
+
         if (Math.abs(numToFormat) < 1000) return numToFormat.toString();
 
-        let baseNumForSuffix = floorOutputForDisplay ? Math.floor(num) : num;
-        if (baseNumForSuffix === 0 && num !== 0 && !floorOutputForDisplay) baseNumForSuffix = num;
+        let baseNumForSuffix = num;
         const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
         let i = 0;
-        if (Math.abs(baseNumForSuffix) >= 1000) i = Math.max(0, Math.min(suffixes.length - 1, Math.floor(Math.log10(Math.abs(baseNumForSuffix)) / 3)));
-        if (i === 0) return (floorOutputForDisplay || baseNumForSuffix % 1 === 0) ? Math.floor(baseNumForSuffix).toString() : parseFloat(baseNumForSuffix.toFixed(1)).toString();
+        if (Math.abs(baseNumForSuffix) >= 1000) {
+            i = Math.max(0, Math.min(suffixes.length - 1, Math.floor(Math.log10(Math.abs(baseNumForSuffix)) / 3)));
+        }
+        if (i === 0) return Math.floor(baseNumForSuffix).toString(); // Fallback for numbers just below 1000 after processing
+
         let shortNum = (baseNumForSuffix / Math.pow(1000, i));
         if (shortNum.toFixed(1).endsWith('.0')) return shortNum.toFixed(0) + suffixes[i];
         return parseFloat(shortNum.toFixed(1)) + suffixes[i];

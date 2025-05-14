@@ -315,3 +315,312 @@ footer {
     font-size: 0.9em;
     color: #7f8c8d;
 }
+
+/* === Existing styles from previous steps should be here === */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    margin: 0;
+    /* Add padding to the top of the body if sticky header has a fixed height and position:fixed is used.
+       For position:sticky, this is usually not needed unless an offset is desired. */
+    padding: 20px; /* Existing padding */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    background-color: #162447;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 1000px;
+}
+
+/* Sticky Header Area Styling */
+.sticky-top-area {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0; /* Stick to the top of the viewport */
+    z-index: 1000; /* Ensure it stays on top of other content */
+    background-color: #162447; /* Match container background to prevent transparency issues */
+    padding-bottom: 15px; /* Add some space below the sticky area before tabs */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: subtle shadow to show elevation */
+}
+
+header { /* Styles for the header within sticky area */
+    text-align: center;
+    margin-bottom: 20px; /* Reduced margin as padding-bottom on sticky-top-area handles outer spacing */
+    padding-bottom: 15px;
+    border-bottom: 2px solid #1f4068;
+}
+
+header h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: #e43f5a;
+    font-size: 2.8em;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(228, 63, 90, 0.5);
+}
+
+/* Stats Section Styling (within sticky area) */
+#stats-section {
+     margin-bottom: 0; /* Remove margin as sticky-top-area handles spacing below */
+     padding: 15px 20px 0 20px; /* Adjust padding if needed, top padding to space from H1 */
+     background-color: transparent; /* Should inherit from sticky-top-area or be explicitly set */
+     border-radius: 0; /* Remove radius if it's part of a larger sticky block */
+     box-shadow: none; /* Remove shadow if it's part of a larger sticky block */
+}
+#stats-section h2 { /* Title "Your Empire" */
+    color: #1abc9c;
+    margin-top: 0;
+    padding-bottom: 10px;
+    font-size: 1.8em;
+    border-bottom: 1px solid #1f4068; /* Keep this border */
+}
+
+.stats-display { /* The Gold and IPS boxes */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: 500;
+    padding: 10px 0; /* Adjusted padding */
+    /* background-color: rgba(0,0,0,0.1);  Can remove if sticky-top-area has solid bg */
+    border-radius: 6px;
+}
+
+.stats-display p {
+    margin: 5px 10px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    background-color: #1f4068;
+    min-width: 200px;
+    text-align: center;
+}
+
+.stats-display span {
+    font-weight: 700;
+    color: #ffffff;
+    margin-left: 8px;
+    font-size: 1.3em;
+}
+#goldDisplay { color: #f0a500; }
+#ipsDisplay { color: #2ecc71; }
+
+
+/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    margin-bottom: 25px;
+    /* margin-top: 15px; /* Add margin-top if sticky area doesn't have padding-bottom */
+}
+
+.tab-button {
+    font-family: 'Orbitron', sans-serif;
+    padding: 12px 25px;
+    cursor: pointer;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background-color: #2c3e50;
+    color: #bdc3c7;
+    font-size: 1.1em;
+    font-weight: 500;
+    margin-right: 8px;
+    border-radius: 6px 6px 0 0;
+    transition: background-color 0.3s, color 0.3s, border-bottom-color 0.3s;
+}
+
+.tab-button:hover {
+    background-color: #34495e;
+    color: #ffffff;
+}
+
+.tab-button.active {
+    background-color: #1b1b2f; /* Match active panel section background */
+    color: #e43f5a;
+    border-bottom-color: #e43f5a;
+}
+
+/* Tab Panels & Content Sections */
+#tabContentContainer {
+    /* styles for the container of tab panels if needed */
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* Styling for the sections INSIDE the tabs */
+#properties-section-content, 
+#owned-properties-section-content {
+    margin-bottom: 0;
+    padding: 20px;
+    background-color: #1b1b2f;
+    border-radius: 8px;
+}
+
+#properties-section-content h2, 
+#owned-properties-section-content h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #f0a500;
+    margin-top: 0;
+    border-bottom: 1px solid #1f4068;
+    padding-bottom: 10px;
+    font-size: 1.8em;
+}
+
+
+/* Properties Grid (applies within active tab) */
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.property-card {
+    background-color: #2c3e50;
+    border: 1px solid #1f4068;
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.property-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #e43f5a;
+    font-size: 1.4em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+}
+
+.property-card p {
+    margin: 8px 0;
+    font-size: 0.95em;
+    color: #bdc3c7;
+}
+
+.property-card .description {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #95a5a6;
+    margin-bottom: 12px;
+    min-height: 40px;
+}
+
+.property-cost {
+    font-weight: bold;
+}
+.property-cost.unaffordable { color: #e74c3c; }
+.property-cost.affordable { color: #2ecc71; }
+
+
+/* Tier Indicators */
+.tier-indicator {
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: #fff;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+.tier-1 { background-color: #3498db; }
+.tier-2 { background-color: #2ecc71; }
+.tier-3 { background-color: #f1c40f; color: #333; }
+.tier-4 { background-color: #e67e22; }
+.tier-5 { background-color: #9b59b6; }
+
+
+/* Level Progress Bar */
+.level-progress-container {
+    width: 100%;
+    background-color: #1f4068;
+    border-radius: 4px;
+    height: 12px;
+    margin: 8px 0;
+    overflow: hidden;
+}
+
+.level-progress-bar {
+    height: 100%;
+    background-color: #e43f5a;
+    border-radius: 4px 0 0 4px;
+    transition: width 0.3s ease-out;
+    text-align: center;
+    font-size: 0.7em;
+    line-height: 12px;
+    color: #fff;
+}
+
+.owned-property-details p { margin: 6px 0; }
+.owned-property-details .income-gain { color: #2ecc71; font-weight: 500; }
+
+/* Buttons */
+.property-card button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-top: 15px;
+    box-sizing: border-box;
+}
+
+.property-card button:hover:not(:disabled) {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+.property-card button:active:not(:disabled) { transform: translateY(0px); }
+
+.property-card button.upgrade-button { background-color: #2ecc71; }
+.property-card button.upgrade-button:hover:not(:disabled) { background-color: #27ae60; }
+
+.property-card button:disabled {
+    background-color: #7f8c8d;
+    color: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.property-card button.btn-affordable { box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
+.property-card button.btn-affordable.purchase-button { box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #1f4068;
+    font-size: 0.9em;
+    color: #7f8c8d;
+}

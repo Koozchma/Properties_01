@@ -128,26 +128,28 @@ header h1 { /* Realm Tycoon: Ascendancy */
 /* Tab Navigation */
 .tab-navigation {
     display: flex;
+    flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
     margin-bottom: 25px;
 }
 
 .tab-button {
     font-family: 'Orbitron', sans-serif;
-    padding: 12px 25px;
+    padding: 12px 20px; /* Adjusted padding for potentially more tabs */
     cursor: pointer;
     border: none;
     border-bottom: 3px solid transparent;
     background-color: var(--card-bg-color); /* Inactive tab */
     color: var(--text-light-secondary);
-    font-size: 1.1em;
+    font-size: 1.05em; /* Slightly smaller if more tabs */
     font-weight: 500;
     margin-right: 8px;
+    margin-bottom: 5px; /* For wrapping */
     border-radius: 6px 6px 0 0;
     transition: background-color 0.3s, color 0.3s, border-bottom-color 0.3s;
 }
 
 .tab-button:hover {
-    background-color: var(--border-dark-accent); /* Slightly lighter for hover */
+    background-color: var(--border-dark-accent);
     color: #ffffff;
 }
 
@@ -166,7 +168,8 @@ header h1 { /* Realm Tycoon: Ascendancy */
 /* Styling for the sections INSIDE the tabs */
 #properties-section-content,
 #owned-properties-section-content,
-#achievements-section-content { /* Added achievements section */
+#achievements-section-content,
+#ascendancy-section-content { /* Added ascendancy section */
     margin-bottom: 0;
     padding: 20px;
     background-color: var(--section-bg-color);
@@ -175,13 +178,18 @@ header h1 { /* Realm Tycoon: Ascendancy */
 
 #properties-section-content h2,
 #owned-properties-section-content h2,
-#achievements-section-content h2 { /* Added achievements section */
+#achievements-section-content h2,
+#ascendancy-section-content h2 { /* Added ascendancy section */
     font-family: 'Orbitron', sans-serif;
-    color: var(--text-bright-neutral);
+    color: var(--text-bright-neutral); /* Default for most section titles */
     margin-top: 0;
     border-bottom: 1px solid var(--border-dark-accent);
     padding-bottom: 10px;
     font-size: 1.8em;
+}
+/* Specific title color for Ascendancy tab */
+#ascendancy-section-content h2 {
+    color: var(--primary-accent-color);
 }
 
 
@@ -274,7 +282,7 @@ header h1 { /* Realm Tycoon: Ascendancy */
 .owned-property-details .income-gain { color: var(--positive-color); font-weight: 500; }
 
 /* Buttons */
-.property-card button { /* Base style for buttons in cards */
+.property-card button, .ascend-action-button, .prestige-upgrade-card button { /* General button styling */
     color: white;
     border: none;
     padding: 12px 18px;
@@ -287,20 +295,20 @@ header h1 { /* Realm Tycoon: Ascendancy */
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-    margin-top: 10px; /* Default margin-top for single button */
+    margin-top: 10px;
     box-sizing: border-box;
 }
 
 /* Default Purchase Button Style */
-.property-card button.purchase-button {
+.property-card button.purchase-button, .buy-multiple-button { /* Includes buy multiple here */
     background-color: var(--primary-accent-darkest);
 }
-.property-card button.purchase-button:hover:not(:disabled) {
-    background-color: var(--primary-accent-darker);
+.property-card button.purchase-button:hover:not(:disabled), .buy-multiple-button:hover:not(:disabled) {
+    background-color: var(--primary-accent-darker) !important; /* Important for buy-multiple override */
     transform: translateY(-1px);
 }
-.property-card button.purchase-button.btn-affordable {
-    background-color: var(--primary-accent-color);
+.property-card button.purchase-button.btn-affordable, .buy-multiple-button.btn-affordable {
+    background-color: var(--primary-accent-color) !important; /* Important for buy-multiple override */
     box-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
@@ -319,13 +327,13 @@ header h1 { /* Realm Tycoon: Ascendancy */
 }
 
 /* General button states */
-.property-card button:active:not(:disabled) { transform: translateY(0px); }
-.property-card button:disabled {
-    background-color: var(--disabled-bg-color);
-    color: var(--disabled-text-color);
+button:active:not(:disabled) { transform: translateY(0px); } /* Applied more broadly */
+button:disabled { /* Applied more broadly */
+    background-color: var(--disabled-bg-color) !important; /* Important to override specifics */
+    color: var(--disabled-text-color) !important;
     cursor: not-allowed;
     opacity: 0.7;
-    box-shadow: none;
+    box-shadow: none !important;
 }
 
 /* Buy Multiple Options */
@@ -333,54 +341,53 @@ header h1 { /* Realm Tycoon: Ascendancy */
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* 2x2 layout */
     gap: 8px;
-    margin-top: 15px; /* Space above the group of buttons */
+    margin-top: 15px;
 }
 
-.buy-multiple-button { /* Specific styling for these smaller buttons */
+.buy-multiple-button {
     padding: 8px 5px !important;
     font-size: 0.9em !important;
-    margin-top: 0 !important; /* Remove individual margin-top if grouped */
-    background-color: var(--primary-accent-darkest); /* Base for buy multiple */
-}
-.buy-multiple-button:hover:not(:disabled) {
-    background-color: var(--primary-accent-darker) !important;
-}
-.buy-multiple-button.btn-affordable {
-    background-color: var(--primary-accent-color) !important;
-    box-shadow: 0 0 8px var(--primary-accent-glow) !important;
+    margin-top: 0 !important;
 }
 
 
 /* Notification Area */
 #notificationArea {
     position: fixed;
-    top: 20px; /* Adjust if sticky header is very tall */
+    top: 20px;
     right: 20px;
     z-index: 3000;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    width: 300px; /* Max width for notifications */
+    width: 320px; /* Max width for notifications */
 }
 
-.achievement-notification {
+.achievement-notification { /* Can be a generic .notification class */
     background-color: var(--primary-accent-color);
     color: var(--text-dark-contrast);
-    padding: 15px 25px;
+    padding: 15px 20px; /* Adjusted padding */
     border-radius: 8px;
     box-shadow: 0 4px 15px var(--primary-accent-glow);
     margin-bottom: 10px;
     font-family: 'Roboto', sans-serif;
-    font-size: 1.1em;
+    font-size: 1.05em; /* Adjusted font size */
     opacity: 1;
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
     transform: translateX(0);
     width: 100%;
     box-sizing: border-box;
+    cursor: pointer; /* Allow clicking to dismiss maybe? */
 }
+.achievement-notification.error-notification { /* For save/load errors etc. */
+    background-color: var(--negative-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+}
+
 .achievement-notification.fade-out {
     opacity: 0;
-    transform: translateX(110%); /* Move completely off-screen */
+    transform: translateX(110%);
 }
 
 
@@ -398,9 +405,9 @@ header h1 { /* Realm Tycoon: Ascendancy */
     border-radius: 8px;
     display: flex;
     align-items: center;
-    opacity: 0.6; /* Dim locked achievements */
+    opacity: 0.6;
     transition: opacity 0.3s, border-left-color 0.3s;
-    border-left: 5px solid transparent; /* Placeholder for unlocked state */
+    border-left: 5px solid transparent;
 }
 
 .achievement-card.unlocked {
@@ -411,20 +418,18 @@ header h1 { /* Realm Tycoon: Ascendancy */
 .achievement-icon {
     font-size: 2.5em;
     margin-right: 15px;
-    flex-shrink: 0; /* Prevent icon from shrinking */
+    flex-shrink: 0;
 }
 
-.achievement-info {
-    flex-grow: 1;
-}
+.achievement-info { flex-grow: 1; }
 
 .achievement-info h4 {
     font-family: 'Orbitron', sans-serif;
-    color: var(--text-light-secondary); /* Muted for locked */
+    color: var(--text-light-secondary);
     margin: 0 0 5px 0;
 }
 .achievement-card.unlocked .achievement-info h4 {
-    color: var(--primary-accent-color); /* Accent for unlocked */
+    color: var(--primary-accent-color);
 }
 
 
@@ -435,18 +440,98 @@ header h1 { /* Realm Tycoon: Ascendancy */
 }
 
 .achievement-status {
-    margin-left: auto; /* Pushes to the right */
+    margin-left: auto;
     font-weight: bold;
     font-size: 0.9em;
-    padding-left: 10px; /* Space from info */
+    padding-left: 10px;
     flex-shrink: 0;
 }
-.achievement-card.unlocked .achievement-status {
-    color: var(--positive-color);
+.achievement-card.unlocked .achievement-status { color: var(--positive-color); }
+.achievement-card:not(.unlocked) .achievement-status { color: var(--text-light-tertiary); }
+
+/* Ascendancy Tab Styles */
+.ascendancy-status {
+    background-color: var(--card-bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-dark-accent);
 }
-.achievement-card:not(.unlocked) .achievement-status {
-    color: var(--text-light-tertiary);
+.ascendancy-status p { margin: 8px 0; font-size: 1.1em; }
+.ascendancy-status span { font-weight: bold; color: var(--text-bright-neutral); }
+#potentialShardsDisplay, #totalRealmShardsDisplay, #shopRealmShardsDisplay {
+    color: var(--primary-accent-color); /* Highlight shards */
 }
+
+.ascend-info-text {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: rgba(0,0,0,0.1);
+    border-left: 4px solid var(--primary-accent-color);
+    font-size: 1em;
+    color: var(--text-light-secondary);
+    border-radius: 0 4px 4px 0;
+}
+
+.ascend-action-button { /* For the main ASCEND button */
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4em;
+    font-weight: bold;
+    /* color and background handled by general button rules or :disabled */
+}
+.ascend-action-button:not(:disabled) { /* Specific enabled state for Ascend */
+    background-color: var(--primary-accent-color);
+    color: var(--text-dark-contrast);
+    box-shadow: 0 0 15px var(--primary-accent-glow);
+}
+.ascend-action-button:not(:disabled):hover {
+    background-color: var(--primary-accent-darker);
+    transform: scale(1.02);
+}
+
+
+.ascend-divider {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, transparent, var(--border-dark-accent), transparent);
+    margin: 30px 0;
+}
+
+.prestige-shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.prestige-upgrade-card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-dark-accent);
+    padding: 15px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.prestige-upgrade-card h4 {
+    color: var(--primary-accent-color);
+    margin-top: 0;
+    font-size: 1.1em;
+}
+.prestige-upgrade-card p { font-size: 0.9em; margin-bottom: 10px; }
+.prestige-upgrade-card .cost { font-weight: bold; color: var(--primary-accent-color); }
+.prestige-upgrade-card button { /* Uses general button styling now */
+    padding: 8px 15px;
+    font-size: 0.95em;
+    background-color: var(--primary-accent-darkest); /* Base state */
+}
+/* Hover and btn-affordable states will be inherited if classes are applied */
+
 
 /* Offline Progress Popup */
 .offline-progress-popup {
@@ -475,10 +560,7 @@ header h1 { /* Realm Tycoon: Ascendancy */
     font-size: 1.8em;
 }
 
-.offline-progress-popup p {
-    margin: 10px 0;
-    font-size: 1.1em;
-}
+.offline-progress-popup p { margin: 10px 0; font-size: 1.1em; }
 
 .offline-progress-popup .highlight {
     color: var(--thematic-gold-color);
@@ -490,13 +572,13 @@ header h1 { /* Realm Tycoon: Ascendancy */
     background-color: var(--primary-accent-color);
     color: var(--text-dark-contrast);
     font-family: 'Orbitron', sans-serif;
-    border: none;
+    /* border: none; (from general button) */
     padding: 12px 25px;
     font-size: 1.1em;
-    border-radius: 6px;
+    /* border-radius: 6px; (from general button) */
     cursor: pointer;
     margin-top: 20px;
-    transition: background-color 0.2s;
+    /* transition: background-color 0.2s; (from general button) */
 }
 
 .offline-progress-popup button:hover {
